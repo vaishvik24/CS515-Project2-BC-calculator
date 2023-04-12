@@ -220,15 +220,22 @@ def bc_evaluator(tokens):
         elif tokens[i] in unary_operators:
             curr_ops = tokens[i]
             i += 1
-            while i < len(tokens) and tokens[i] == ' ':
+            count = 0
+            while i < len(tokens) and (tokens[i] == ' ' or tokens[i] in unary_operators):
+                if tokens[i] in unary_operators:
+                    count += 1
                 i += 1
-            print(i, tokens[i])
+            # print(i, tokens[i])
+
             if tokens[i].isdigit():
                 val_str = ''
                 while i < len(tokens) and (tokens[i].isdigit() or tokens[i] == '.'):
                     val_str += tokens[i]
                     i += 1
-                values.append(apply_unary_ops(float(val_str), curr_ops))
+                if count % 2 == 0:
+                    values.append(apply_unary_ops(float(val_str), curr_ops))
+                else:
+                    values.append(val_str)
                 prev_token_var = False
                 i -= 1
             elif tokens[i].isalpha():
@@ -237,7 +244,12 @@ def bc_evaluator(tokens):
                     variable += tokens[i]
                     i += 1
                 if variable in VARIABLES:
-                    values.append(apply_unary_ops(float(VARIABLES.get(variable)), curr_ops))
+
+                    if count % 2 == 0:
+                        values.append(apply_unary_ops(float(VARIABLES.get(variable)), curr_ops))
+                    else:
+                        values.append(VARIABLES.get(variable))
+                    # values.append(apply_unary_ops(float(VARIABLES.get(variable)), curr_ops))
                     prev_token_var = True
                     i -= 1
                 else:
