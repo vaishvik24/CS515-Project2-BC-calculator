@@ -138,11 +138,35 @@ def new_uncommented_line(i, statements):
         return i
 
 
+def next_varnum(index, tokens):
+    if tokens[index].isdigit():
+        val_str = ''
+        while index < len(tokens) and tokens[index].isalnum():
+            if tokens[index].isalpha(): return False, None
+            val_str += tokens[index]
+            index += 1
+        try:
+            float(val_str)
+            return True, float(val_str), index
+        except:
+            return False, None
+
+    elif tokens[index].isalpha():
+        variable = ''
+        while index < len(tokens) and (tokens[index].isalnum() or tokens[index] == '_'):
+            variable += tokens[index]
+            index += 1
+        return variable in VARIABLES, variable, index
+
+    return False, None
+
+
 # Function that returns value of expression after evaluation.
 def bc_evaluator(tokens):
     # stack to store integer values.
     values = []
-    prev_token_var = False
+    is_prev_variable = False
+    is_prev_operator = True
     # stack to store operators.
     ops = []
     i = 0
@@ -156,7 +180,7 @@ def bc_evaluator(tokens):
 
         # Current token is an opening brace, push it to 'ops'
         elif tokens[i] == '(':
-            prev_token_var = False
+            is_prev_variable, is_prev_operator = False, True
             ops.append(tokens[i])
 
         # Current token is a number, push it to stack for numbers.
@@ -168,102 +192,101 @@ def bc_evaluator(tokens):
                 i += 1
 
             values.append(float(val_str))
-            prev_token_var = False
+            is_prev_variable, is_prev_operator = False, False
             i -= 1
+
+        elif tokens[i].isalpha():
+            # token is not number
+            variable = ''
+            while i < len(tokens) and (tokens[i].isalnum() or tokens[i] == '_'):
+                variable += tokens[i]
+                i += 1
+
+            values.append(variable)
+            is_prev_variable, is_prev_operator = True, False
+            i -= 1
+
+        elif tokens[i] == '-' and is_prev_operator and next_varnum(i+1, tokens)[0]:
+            temp = next_varnum(i+1, tokens)
+            value = temp[1]
+            i = temp[2]
+
+            if isinstance(value, float):
+                values.append(-1 * float(value))
+                is_prev_variable, is_prev_operator = False, False
+                is_prev_operator = False
+            else:
+                values.append(-1 * VARIABLES.get(value))
+                is_prev_variable, is_prev_operator = True, False
 
         # Closing brace encountered, solve entire brace.
         elif tokens[i] == ')':
 
             while len(ops) != 0 and ops[-1] != '(':
-                val2 = values.pop()
-                val1 = values.pop()
                 op = ops.pop()
-                print('helper::  ---> ', val2, op, val1)
-                if not is_number_(val1):
-                    if val1 in VARIABLES:
-                        val1 = VARIABLES.get(val1)
-                    else:
-                        print(val1, ' is not in variable list. (1)')
+                if op in unary_operators:
+                    val1 = values.pop()
+                    if not is_number_(val1):
+                        if val1 in VARIABLES:
+                            val1 = VARIABLES.get(val1)
+                        else:
+                            print(val1, ' is not in variable list. (1)')
+                    values.append(apply_unary_ops(float(val1), op))
 
-                if not is_number_(val2):
-                    if val2 in VARIABLES:
-                        val2 = VARIABLES.get(val2)
-                    else:
-                        print(val2, ' is not in variable list. (1)')
-                print('--------------------> helper::  ---> ', val2, op, val1)
-                values.append(apply_operation(val2, val1, op))
+                else:
+                    val2 = values.pop()
+                    val1 = values.pop()
 
-            prev_token_var = False
-            # pop opening brace.
+                    print('helper::  ---> ', val2, op, val1)
+                    if not is_number_(val1):
+                        if val1 in VARIABLES:
+                            val1 = VARIABLES.get(val1)
+                        else:
+                            print(val1, ' is not in variable list. (1)')
+
+                    if not is_number_(val2):
+                        if val2 in VARIABLES:
+                            val2 = VARIABLES.get(val2)
+                        else:
+                            print(val2, ' is not in variable list. (1)')
+                    print('--------------------> helper::  ---> ', val2, op, val1)
+                    values.append(apply_operation(val2, val1, op))
+
+            is_prev_variable, is_prev_operator = False, False
             ops.pop()
 
         elif tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '=':
             # op-equals extension
             ops.append(tokens[i])
             i += 2
-            prev_token_var = False
+            is_prev_variable, is_prev_operator = False, True
             continue
-        elif tokens[i] in boolean_operators:
-            if i + 1 < len(tokens) and tokens[i] == tokens[i + 1]:
-                i += 1
-            ops.append(tokens[i])
-            prev_token_var = False
 
-        elif tokens[i] in relational_operators or (
-                i + 1 < len(tokens) and (tokens[i] + tokens[i + 1]) in relational_operators):
+        elif tokens[i] in relational_operators or (i + 1 < len(tokens) and tokens[i:i+2] in relational_operators):
             curr_ops = tokens[i]
-            if i + 1 < len(tokens) and (tokens[i] + tokens[i + 1]) in relational_operators:
-                curr_ops = tokens[i] + tokens[i + 1]
+            if i + 1 < len(tokens) and tokens[i:i+2] in relational_operators:
+                curr_ops = tokens[i:i+2]
+                i += 1
             ops.append(curr_ops)
-            prev_token_var = False
+            is_prev_variable, is_prev_operator = False, True
+            is_prev_operator = True
 
         elif tokens[i] in unary_operators:
-            curr_ops = tokens[i]
-            i += 1
-            count = 0
-            while i < len(tokens) and (tokens[i] == ' ' or tokens[i] in unary_operators):
-                if tokens[i] in unary_operators:
-                    count += 1
-                i += 1
-            # print(i, tokens[i])
+            ops.append(tokens[i])
+            is_prev_variable, is_prev_operator = False, True
 
-            if tokens[i].isdigit():
-                val_str = ''
-                while i < len(tokens) and (tokens[i].isdigit() or tokens[i] == '.'):
-                    val_str += tokens[i]
-                    i += 1
-                if count % 2 == 0:
-                    values.append(apply_unary_ops(float(val_str), curr_ops))
-                else:
-                    values.append(val_str)
-                prev_token_var = False
-                i -= 1
-            elif tokens[i].isalpha():
-                variable = ''
-                while i < len(tokens) and (tokens[i].isalnum() or tokens[i] == '_'):
-                    variable += tokens[i]
-                    i += 1
-                if variable in VARIABLES:
-
-                    if count % 2 == 0:
-                        values.append(apply_unary_ops(float(VARIABLES.get(variable)), curr_ops))
-                    else:
-                        values.append(VARIABLES.get(variable))
-                    # values.append(apply_unary_ops(float(VARIABLES.get(variable)), curr_ops))
-                    prev_token_var = True
-                    i -= 1
-                else:
-                    raise Exception(variable, ' is not found in the list')
-            else:
-                raise Exception('There should be number after ! (negate operation)')
+        # elif tokens[i] in boolean_operators:
+        #     if i + 1 < len(tokens) and tokens[i] == tokens[i + 1]:
+        #         i += 1
+        #     ops.append(tokens[i])
+        #     is_prev_variable, is_prev_operator = False, True
 
         # Current token isf an operator.
-        elif tokens[i] in binary_operators:
-            # While top of 'ops' has same or greater precedence to current  token, which is an operator
+        elif tokens[i] in (binary_operators + boolean_operators):
             # ++ / -- cases
             if (tokens[i] == '+' or tokens[i] == '-') and i + 1 < len(tokens) and tokens[i] == tokens[i + 1]:
                 # if true, then post ops else pre ops
-                if prev_token_var:
+                if is_prev_variable:
                     i += 1
                     # pop last variable and do this operation
                     last_var = values.pop()
@@ -303,63 +326,76 @@ def bc_evaluator(tokens):
                         raise Exception('pre ++/-- can be applied to variables only.')
             # normal single operator case
             else:
+                if i + 1 < len(tokens) and tokens[i] == tokens[i + 1]:
+                    i += 1
                 while len(ops) != 0 and precedence(ops[-1]) >= precedence(tokens[i]):
-                    val2 = values.pop()
-                    val1 = values.pop()
                     op = ops.pop()
-                    print('helper::  ---> ', val2, op, val1)
-                    if not is_number_(val1):
-                        if val1 in VARIABLES:
-                            val1 = VARIABLES.get(val1)
-                        else:
-                            print(val1, ' is not in variable list. (1)')
+                    if op in unary_operators:
+                        val1 = values.pop()
+                        if not is_number_(val1):
+                            if val1 in VARIABLES:
+                                val1 = VARIABLES.get(val1)
+                            else:
+                                print(val1, ' is not in variable list. (1)')
+                        values.append(apply_unary_ops(float(val1), op))
 
-                    if not is_number_(val2):
-                        if val2 in VARIABLES:
-                            val2 = VARIABLES.get(val2)
-                        else:
-                            print(val2, ' is not in variable list. (1)')
-                    print('--------------------> helper::  ---> ', val2, op, val1)
-                    values.append(apply_operation(val2, val1, op))
+                    else:
+                        val2 = values.pop()
+                        val1 = values.pop()
+                        print('helper::  ---> ', val2, op, val1)
+                        if not is_number_(val1):
+                            if val1 in VARIABLES:
+                                val1 = VARIABLES.get(val1)
+                            else:
+                                print(val1, ' is not in variable list. (1)')
+
+                        if not is_number_(val2):
+                            if val2 in VARIABLES:
+                                val2 = VARIABLES.get(val2)
+                            else:
+                                print(val2, ' is not in variable list. (1)')
+                        print('--------------------> helper::  ---> ', val2, op, val1)
+                        values.append(apply_operation(val2, val1, op))
 
                 # Push current token to 'ops'.
                 ops.append(tokens[i])
-            prev_token_var = False
-        elif tokens[i].isalpha():
-            # token is not number
-            variable = ''
-            while i < len(tokens) and (tokens[i].isalnum() or tokens[i] == '_'):
-                # val = (val * 10) + int(tokens[i])
-                variable += tokens[i]
-                i += 1
 
-            values.append(variable)
-            prev_token_var = True
-            i -= 1
+            is_prev_variable, is_prev_operator = False, True
+
         else:
-            prev_token_var = False
+            is_prev_variable, is_prev_operator = False, True
             print('************************************ unwanted token', i, ' ----> ', tokens[i])
         i += 1
 
     # Entire expression has been parsed at this point, apply remaining ops to remaining values.
     while len(ops) != 0:
-        val2 = values.pop()
-        val1 = values.pop()
         op = ops.pop()
-        print('helper::  ---> ', val2, op, val1)
-        if not is_number_(val1):
-            if val1 in VARIABLES:
-                val1 = VARIABLES.get(val1)
-            else:
-                print(val1, ' is not in variable list. (1)')
+        if op in unary_operators:
+            val1 = values.pop()
+            if not is_number_(val1):
+                if val1 in VARIABLES:
+                    val1 = VARIABLES.get(val1)
+                else:
+                    print(val1, ' is not in variable list. (1)')
+            values.append(apply_unary_ops(float(val1), op))
 
-        if not is_number_(val2):
-            if val2 in VARIABLES:
-                val2 = VARIABLES.get(val2)
-            else:
-                print(val2, ' is not in variable list. (1)')
-        print('--------------------> helper::  ---> ', val2, op, val1)
-        values.append(apply_operation(val2, val1, op))
+        else:
+            val2 = values.pop()
+            val1 = values.pop()
+            print('helper::  ---> ', val2, op, val1)
+            if not is_number_(val1):
+                if val1 in VARIABLES:
+                    val1 = VARIABLES.get(val1)
+                else:
+                    print(val1, ' is not in variable list. (1)')
+
+            if not is_number_(val2):
+                if val2 in VARIABLES:
+                    val2 = VARIABLES.get(val2)
+                else:
+                    print(val2, ' is not in variable list. (1)')
+            print('--------------------> helper::  ---> ', val2, op, val1)
+            values.append(apply_operation(val2, val1, op))
 
     # Top of 'values' contains result, return it.
     if values[-1] in VARIABLES:
@@ -491,8 +527,11 @@ def bc_parser(input_expression):
 
 input_str11 = """
 x = 1
-y = x - -1
-print x, y
+yzw = 123
+y = x - -yzw + 1
+w = ++x
+z = x && 0 && 1 || 0
+print x, y, !!!!x, w, z
 """
 
 bc_parser(input_str11)
