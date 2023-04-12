@@ -90,7 +90,7 @@ def is_relational_cond(statement):
 def has_assign_var(statement):
     statement = statement.replace(" ", "")
     for i in statement:
-        if i.isalpha() or i.isdigit():
+        if i.isalnum() or i == '_':
             pass
         elif i == '=':
             return True
@@ -104,7 +104,7 @@ def relational_cond_var(statement):
     var = ''
     i = 0
     while i < len(statement):
-        if statement[i].isalpha() or statement[i].isdigit():
+        if statement[i].isalnum() or statement[i] == '_':
             var += statement[i]
         elif statement[i] == '=':
             i += 1
@@ -117,7 +117,7 @@ def op_equals_var(statement):
     statement = statement.replace(" ", "")
     var = ''
     for i in statement:
-        if i.isalpha() or i.isdigit():
+        if i.isalnum() or i == '_':
             var += i
         else:
             return var
@@ -240,7 +240,7 @@ def bc_evaluator(tokens):
                 i -= 1
             elif tokens[i].isalpha():
                 variable = ''
-                while i < len(tokens) and (tokens[i].isdigit() or tokens[i].isalpha()):
+                while i < len(tokens) and (tokens[i].isalnum() or tokens[i] == '_'):
                     variable += tokens[i]
                     i += 1
                 if variable in VARIABLES:
@@ -284,7 +284,7 @@ def bc_evaluator(tokens):
                     if tokens[i].isalpha():
                         # token is not number
                         variable = ''
-                        while i < len(tokens) and (tokens[i].isdigit() or tokens[i].isalpha()):
+                        while i < len(tokens) and (tokens[i].isalnum() or tokens[i] == '_'):
                             variable += tokens[i]
                             i += 1
 
@@ -328,8 +328,7 @@ def bc_evaluator(tokens):
         elif tokens[i].isalpha():
             # token is not number
             variable = ''
-            while (i < len(tokens) and
-                   (tokens[i].isdigit() or tokens[i].isalpha())):
+            while i < len(tokens) and (tokens[i].isalnum() or tokens[i] == '_'):
                 # val = (val * 10) + int(tokens[i])
                 variable += tokens[i]
                 i += 1
@@ -498,6 +497,7 @@ print x, y
 
 bc_parser(input_str11)
 
+# main function - takes input from std in and pass it to bc parser
 # def bc_calculator():
 #     statements = sys.stdin.read()
 #     bc_parser(statements)
