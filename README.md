@@ -15,3 +15,11 @@
 
 ==, <=, >=, !=, <, >
 --> would it be used in print
+
+
+
+TODOs
+- variable can have underscore too
+- unary operation (negative numbers)
+- readme file 
+- testing complex ips

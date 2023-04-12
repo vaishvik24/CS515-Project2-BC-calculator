@@ -1,0 +1,91 @@
+
+# split input into individual statements and evaluate each one
+input_str = """x = 3
+y = 5
+z = 2 + x * y
+z2 = (2 + x) * y
+print x, y, z, z2"""
+# bc_calculate(input_str)
+
+input_str2 = """pi = 3.14159
+r = 2
+area = pi * r^2
+print area"""
+# bc_calculate(input_str2)
+
+input_str3 = """x = 2
+x1 = 3
+x2 = 6.5
+y1 = x1 + x2
+y2 = x1 + x2 * 2
+y3 = x2 / x1 - x
+y4 = x2 % 2
+y5 = x1 ^ 2
+print x,x1,x2, y1, y2, y3,y4
+"""
+# bc_calculate(input_str3)
+
+input_str4 = """x = 0
+y = 5
+x+ y
+z = x++ + y
+++y
+print x++ + y, x, y, z"""
+# bc_calculate(input_str4)
+
+input_str5 = """
+print 5 - 1 - 1 - 1
+print ((5 - 1) - 1) - 1
+print 2 ^ 2 ^ 2
+
+"""
+# bc_calculate(input_str5)
+
+input_str6 = """
+print 0/1, 1/0
+1/
+"""
+# bc_calculate(input_str6)
+
+input_str7 = """
+x = 1
+y = 2
+print x, y
+/* z = 3
+w = 4
+i = 3 */
+x = 3
+# i have changed x
+print x, y
+"""
+# bc_calculate(input_str7)
+
+input_str8 = """
+1 && 2
+2 && 1
+1 || 0
+0 && 1
+!10
+print 1 && 2, 2 && 1, 1 || 0, 0 && 1, !1, !0, !10, !15
+"""
+# bc_calculate(input_str8)
+
+input_str9 = """
+x= 1
+x+=3
+x-=2
+x*=3
+x/=1.5
+x^=4
+print x
+"""
+# bc_calculate(input_str9)
+
+input_str10 = """
+x = 1 > 5
+y = 6 > 3
+print x,y, 6 >= 6, 7<=8, 4==4, 5!=4, 9!=9
+"""
+
+
+# bc_calculate(input_str10)
