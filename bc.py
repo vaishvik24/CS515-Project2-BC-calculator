@@ -214,7 +214,9 @@ def bc_evaluator(tokens):
                 is_prev_variable, is_prev_operator = False, False
                 is_prev_operator = False
             else:
-                values.append(-1 * float(VARIABLES.get(value, 0.0)))
+                if value not in VARIABLES:
+                    VARIABLES[value] = 0.0
+                values.append(-1 * float(VARIABLES.get(value)))
                 is_prev_variable, is_prev_operator = True, False
             continue
         # Closing brace encountered, solve entire brace.
@@ -224,15 +226,21 @@ def bc_evaluator(tokens):
                 if op in unary_operators:
                     val1 = values.pop()
                     if not is_number_(val1):
-                        val1 = VARIABLES.get(val1, 0.0)
+                        if val1 not in VARIABLES:
+                            VARIABLES[val1] = 0.0
+                        val1 = VARIABLES.get(val1)
                     values.append(float(apply_unary_ops(float(val1), op)))
                 else:
                     val2 = values.pop()
                     val1 = values.pop()
                     if not is_number_(val1):
-                        val1 = VARIABLES.get(val1, 0.0)
+                        if val1 not in VARIABLES:
+                            VARIABLES[val1] = 0.0
+                        val1 = VARIABLES.get(val1)
                     if not is_number_(val2):
-                        val2 = VARIABLES.get(val2, 0.0)
+                        if val2 not in VARIABLES:
+                            VARIABLES[val2] = 0.0
+                        val2 = VARIABLES.get(val2)
                     values.append(float(apply_operation(val2, val1, op)))
             is_prev_variable, is_prev_operator = False, False
             ops.pop()
@@ -315,15 +323,21 @@ def bc_evaluator(tokens):
                     if op in unary_operators:
                         val1 = values.pop()
                         if not is_number_(val1):
-                            val1 = VARIABLES.get(val1, 0.0)
+                            if val1 not in VARIABLES:
+                                VARIABLES[val1] = 0.0
+                            val1 = VARIABLES.get(val1)
                         values.append(float(apply_unary_ops(float(val1), op)))
                     else:
                         val2 = values.pop()
                         val1 = values.pop()
                         if not is_number_(val1):
-                            val1 = VARIABLES.get(val1, 0.0)
+                            if val1 not in VARIABLES:
+                                VARIABLES[val1] = 0.0
+                            val1 = VARIABLES.get(val1)
                         if not is_number_(val2):
-                            val2 = VARIABLES.get(val2, 0.0)
+                            if val2 not in VARIABLES:
+                                VARIABLES[val2] = 0.0
+                            val2 = VARIABLES.get(val2)
                         values.append(float(apply_operation(val2, val1, op)))
                 # Push current token to 'ops'.
                 ops.append(tokens[i])
@@ -337,15 +351,21 @@ def bc_evaluator(tokens):
         if op in unary_operators:
             val1 = values.pop()
             if not is_number_(val1):
-                val1 = VARIABLES.get(val1, 0.0)
+                if val1 not in VARIABLES:
+                    VARIABLES[val1] = 0.0
+                val1 = VARIABLES.get(val1)
             values.append(float(apply_unary_ops(float(val1), op)))
         else:
             val2 = values.pop()
             val1 = values.pop()
             if not is_number_(val1):
-                val1 = VARIABLES.get(val1, 0.0)
+                if val1 not in VARIABLES:
+                    VARIABLES[val1] = 0.0
+                val1 = VARIABLES.get(val1)
             if not is_number_(val2):
-                val2 = VARIABLES.get(val2, 0.0)
+                if val2 not in VARIABLES:
+                    VARIABLES[val2] = 0.0
+                val2 = VARIABLES.get(val2)
             values.append(float(apply_operation(val2, val1, op)))
     # Top of 'values' contains result, return it.
     if len(values) == 0:
@@ -408,7 +428,6 @@ def bc_parser(input_expression):
                 except ZeroDivisionError:
                     things_to_be_printed.append('divide by zero')
                     dbz_error += 1
-                    # break
                 except:
                     parse_error += 1
             else:
@@ -417,7 +436,6 @@ def bc_parser(input_expression):
                 except ZeroDivisionError:
                     things_to_be_printed.append('divide by zero')
                     dbz_error += 1
-                    # break
                 except:
                     parse_error += 1
         elif '=' in statement:
@@ -430,7 +448,6 @@ def bc_parser(input_expression):
                 if dbz_error == 0:
                     things_to_be_printed.append('divide by zero')
                 dbz_error += 1
-                # break
             except:
                 parse_error += 1
         elif statement is None or len(statement) == 0:
@@ -443,7 +460,6 @@ def bc_parser(input_expression):
                 if dbz_error == 0:
                     things_to_be_printed.append('divide by zero')
                 dbz_error += 1
-                # break
             except:
                 parse_error += 1
         else:

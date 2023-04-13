@@ -1,4 +1,6 @@
 print 1
-print 11, 1/0, 1,2,33
+print 11,12, 1, 1,2,33
 print 12
-x
+print 1
+x = y++
+print y
