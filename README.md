@@ -39,16 +39,22 @@
 I've implemented 4 extensions. 
 Each extension is described as below:
 ### Op-equals:
-- todo
+- Op-equals extension helps us to evaluate the expressions containing  +=, -=, *=, /=, %= and ^= operators. In the bc_parser, each line is checked whether it contains the above mentioned operators. if yes, it is directed to operator parser function to strip the whitespaces and validate the string contains alphanumeric characters. It returns the processed string and passed into bc_calculator function as an input argument
+- The next step is identifying the operator in the string and performing the operation accordingly and storing the updated variable name and its value in VARIABLES dictionary which created at the beginning. All operators are stored in stacks and validated using BODMAS rules. Error handling is done for this case when invalid operators such as '++' or '--' are present. it catches in excpetion it can be used only on variables. 
 
 ### Binary Operators:
-- todo
+- Binary operations extension evaluates the input statements which contain mathematical expressions having ['+', '-', '*', '/', '^', '%'] this operators. in each input line, the operators are recognized and stored in operators stacks, the line passed into bc_parser and then the variables are recognized and the experssion is evaluated using apply_operation(a,b,op) function which return the value.
+- In the bc_evaluator() function, the input is validated by checking whether the constant is present in variables dict and then access its value and perform the operation and then update the variable value in the dictionary. Error handling is done for this extension by catching error when input line contains '++' in the expression since its valid only for the constants. For an expression to be evaluated, variable values stored in stacks are popped out and even the operator and then those are passed into apply_operation() function. 
+- In this way, the extension works and no errors have been found since every possibility is tried and the errors are caught and displayed when given invalid inputs
 
 ### Comments:
-- todo
+- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with /* or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
+- Till the line contains "*/" the i index increments making the parser to ignore the lines whatever given in between /* and /*. In this way the extension works and ignores the commented input lines. In this way, this extension works
 
 ### Relational Operations:
-- todo
+- Relational operations extension evaluates the input statements which contain ['==', '<=', '>=', '!=', '<', '>'] this operators. Every operation returns the boolean value and is checked between two variables. The input line is checked whether it contains any of the above operators using the is_relational_cond() condition which is used in the bc_parser() function. Then, it is checked whether it contains any variables which are not defined. 
+- It is then passed into relational_cond_var() function to collect variable and the value present in the relation. After processing the input and then getting the variable and the value from the function, these two are passed into bc_evaluator function and it is evaluated inside the function. 
+- Error handling is done for this Extension catching Zero division error and Parsing error. In this way this extension is implemented. 
 
 ## 🏃‍Run Guide
 
