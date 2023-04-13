@@ -379,6 +379,7 @@ def bc_parser(input_expression):
                 except ZeroDivisionError:
                     value = 'divide by zero'
                     values.append(str(value))
+                    things_to_be_printed.append(' '.join(values))
                     dbz_error += 1
                     break
                 except:
