@@ -206,25 +206,29 @@ def bc_evaluator(tokens):
             is_prev_variable, is_prev_operator = True, False
             i -= 1
         elif tokens[i] == '-' and is_prev_operator and next_varnum(i + 1, tokens)[0]:
-            temp = next_varnum(i + 1, tokens)
-            value = temp[1]
-            i = temp[2]
-            if isinstance(value, float):
-                values.append(-1 * float(value))
-                is_prev_variable, is_prev_operator = False, False
-                is_prev_operator = False
-            else:
-                if value not in VARIABLES:
-                    VARIABLES[value] = 0.0
-                if tokens[i:i + 2] == '++' or tokens[i:i + 2] == '--':
-                    if tokens[i] == '+':
-                        VARIABLES[value] += 1
-                    else:
-                        VARIABLES[value] -= 1
-                    i += 2
-                values.append(-1 * float(VARIABLES.get(value)))
-                is_prev_variable, is_prev_operator = True, False
-            continue
+            ops.append(tokens[i])
+            values.append(0.0)
+            is_prev_variable, is_prev_operator = False, True
+            # temp = next_varnum(i + 1, tokens)
+            # value = temp[1]
+            # i = temp[2]
+            # if isinstance(value, float):
+            #     values.append(-1 * float(value))
+            #     is_prev_variable, is_prev_operator = False, False
+            #     is_prev_operator = False
+            # else:
+            #     if value not in VARIABLES:
+            #         VARIABLES[value] = 0.0
+            #
+            #     if tokens[i:i + 2] == '++' or tokens[i:i + 2] == '--':
+            #         if tokens[i] == '+':
+            #             VARIABLES[value] += 1
+            #         else:
+            #             VARIABLES[value] -= 1
+            #         i += 2
+            #     values.append(-1 * float(VARIABLES.get(value)))
+            #     is_prev_variable, is_prev_operator = True, False
+            # continue
         # Closing brace encountered, solve entire brace.
         elif tokens[i] == ')':
             while len(ops) != 0 and ops[-1] != '(':
@@ -469,18 +473,6 @@ def bc_parser(input_expression):
                 dbz_error += 1
             except:
                 parse_error += 1
-        # elif '++' in statement or '--' in statement or any(
-        #         op in statement for op in (binary_operators + boolean_operators + unary_operators)):
-        #     try:
-        #         bc_evaluator(statement.strip())
-        #     except ZeroDivisionError:
-        #         if dbz_error == 0:
-        #             things_to_be_printed.append('divide by zero')
-        #         dbz_error += 1
-        #     except:
-        #         parse_error += 1
-        # else:
-        #     pass
         i += 1
     if parse_error == 0:
         for p in things_to_be_printed:
@@ -495,10 +487,9 @@ def bc_calculator():
     bc_parser(statements)
 
 
-bc_calculator()
+# bc_calculator()
 
-# ip_ = """print 1
-# x=1
-# y= -x++
-# print x, y"""
-# bc_parser(ip_)
+ip_ = """x=1
+y = -x++
+print x, y,z"""
+bc_parser(ip_)
