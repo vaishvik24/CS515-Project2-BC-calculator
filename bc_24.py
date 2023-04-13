@@ -25,16 +25,6 @@ def is_number_(s):
         return False
 
 
-def is_var_name(s):
-    i = 0
-    if s[i].isalpha():
-        while i < len(s) and (s[i].isalnum() or s[i] == '_'):
-            i += 1
-        return i == len(s)
-    else:
-        return False
-
-
 binary_operators = ['+', '-', '*', '/', '^', '%']
 boolean_operators = ['&', '|']
 unary_operators = ['!']
@@ -164,7 +154,7 @@ def next_varnum(index, tokens):
         while index < len(tokens) and (tokens[index].isalnum() or tokens[index] == '_'):
             variable += tokens[index]
             index += 1
-        return True, variable, index
+        return variable in VARIABLES, variable, index
     return False, None
 
 
@@ -214,7 +204,7 @@ def bc_evaluator(tokens):
                 is_prev_variable, is_prev_operator = False, False
                 is_prev_operator = False
             else:
-                values.append(-1 * float(VARIABLES.get(value, 0.0)))
+                values.append(-1 * float(VARIABLES.get(value)))
                 is_prev_variable, is_prev_operator = True, False
         # Closing brace encountered, solve entire brace.
         elif tokens[i] == ')':
@@ -223,15 +213,24 @@ def bc_evaluator(tokens):
                 if op in unary_operators:
                     val1 = values.pop()
                     if not is_number_(val1):
-                        val1 = VARIABLES.get(val1, 0.0)
+                        if val1 in VARIABLES:
+                            val1 = VARIABLES.get(val1)
+                        else:
+                            pass
                     values.append(float(apply_unary_ops(float(val1), op)))
                 else:
                     val2 = values.pop()
                     val1 = values.pop()
                     if not is_number_(val1):
-                        val1 = VARIABLES.get(val1, 0.0)
+                        if val1 in VARIABLES:
+                            val1 = VARIABLES.get(val1)
+                        else:
+                            pass
                     if not is_number_(val2):
-                        val2 = VARIABLES.get(val2, 0.0)
+                        if val2 in VARIABLES:
+                            val2 = VARIABLES.get(val2)
+                        else:
+                            pass
                     values.append(float(apply_operation(val2, val1, op)))
             is_prev_variable, is_prev_operator = False, False
             ops.pop()
@@ -267,12 +266,6 @@ def bc_evaluator(tokens):
                             VARIABLES[last_var] += 1
                         else:
                             VARIABLES[last_var] -= 1
-                    elif is_var_name(last_var):
-                        VARIABLES[last_var] = 0.0
-                        if tokens[i] == '+':
-                            VARIABLES[last_var] += 1
-                        else:
-                            VARIABLES[last_var] -= 1
                     else:
                         raise Exception('post ++/-- can be applied to variables only')
                 else:
@@ -295,12 +288,6 @@ def bc_evaluator(tokens):
                             else:
                                 VARIABLES[variable] -= 1
                                 values.append(float(VARIABLES[variable]))
-                        elif is_var_name(last_var):
-                            VARIABLES[last_var] = 0.0
-                            if tokens[i] == '+':
-                                VARIABLES[last_var] += 1
-                            else:
-                                VARIABLES[last_var] -= 1
                         else:
                             raise Exception('post ++/-- can be applied to variables only')
                     else:
@@ -314,15 +301,24 @@ def bc_evaluator(tokens):
                     if op in unary_operators:
                         val1 = values.pop()
                         if not is_number_(val1):
-                            val1 = VARIABLES.get(val1, 0.0)
+                            if val1 in VARIABLES:
+                                val1 = VARIABLES.get(val1)
+                            else:
+                                pass
                         values.append(float(apply_unary_ops(float(val1), op)))
                     else:
                         val2 = values.pop()
                         val1 = values.pop()
                         if not is_number_(val1):
-                            val1 = VARIABLES.get(val1, 0.0)
+                            if val1 in VARIABLES:
+                                val1 = VARIABLES.get(val1)
+                            else:
+                                pass
                         if not is_number_(val2):
-                            val2 = VARIABLES.get(val2, 0.0)
+                            if val2 in VARIABLES:
+                                val2 = VARIABLES.get(val2)
+                            else:
+                                pass
                         values.append(float(apply_operation(val2, val1, op)))
                 # Push current token to 'ops'.
                 ops.append(tokens[i])
@@ -336,15 +332,24 @@ def bc_evaluator(tokens):
         if op in unary_operators:
             val1 = values.pop()
             if not is_number_(val1):
-                val1 = VARIABLES.get(val1, 0.0)
+                if val1 in VARIABLES:
+                    val1 = VARIABLES.get(val1)
+                else:
+                    pass
             values.append(float(apply_unary_ops(float(val1), op)))
         else:
             val2 = values.pop()
             val1 = values.pop()
             if not is_number_(val1):
-                val1 = VARIABLES.get(val1, 0.0)
+                if val1 in VARIABLES:
+                    val1 = VARIABLES.get(val1)
+                else:
+                    pass
             if not is_number_(val2):
-                val2 = VARIABLES.get(val2, 0.0)
+                if val2 in VARIABLES:
+                    val2 = VARIABLES.get(val2)
+                else:
+                    pass
             values.append(float(apply_operation(val2, val1, op)))
     # Top of 'values' contains result, return it.
     if len(values) == 0:
