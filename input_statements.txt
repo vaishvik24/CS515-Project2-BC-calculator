@@ -1,4 +1,9 @@
+1/0
 print x
 x = 1 - -1 + 1
 y = w + z
-print x, 1, y
+w = 3
+z= 2
+print x, 1, y,z,w
+print 1,2,3,1/0, 5,6,7
+print 34

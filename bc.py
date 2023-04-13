@@ -358,11 +358,14 @@ def bc_evaluator(tokens):
 
 def bc_parser(input_expression):
     statements = input_expression.split('\n')
-    errors = 0
+    parse_error = 0
+    dbz_error = 0
     things_to_be_printed = []
     i = 0
     while i < len(statements):
         statement = statements[i]
+        if parse_error > 0 or dbz_error > 0:
+            break
         if statement.strip().startswith('print'):
             # evaluate the expression(s) to be printed
             expr = statement[6:].strip().replace(' ', '')
@@ -375,9 +378,10 @@ def bc_parser(input_expression):
                 except ZeroDivisionError:
                     value = 'divide by zero'
                     values.append(str(value))
+                    dbz_error += 1
                     break
                 except:
-                    errors += 1
+                    parse_error += 1
                 values.append(str(value))
             things_to_be_printed.append(' '.join(values))
         elif is_commented(statement):
@@ -389,9 +393,10 @@ def bc_parser(input_expression):
                 VARIABLES[var.strip()] = bc_evaluator(statement.strip())
             except ZeroDivisionError:
                 things_to_be_printed.append('divide by zero')
+                dbz_error += 1
                 break
             except:
-                errors += 1
+                parse_error += 1
         elif is_relational_cond(statement):
             if has_assign_var(statement):
                 try:
@@ -399,17 +404,19 @@ def bc_parser(input_expression):
                     VARIABLES[var.strip()] = bc_evaluator(exp.strip())
                 except ZeroDivisionError:
                     things_to_be_printed.append('divide by zero')
+                    dbz_error += 1
                     break
                 except:
-                    errors += 1
+                    parse_error += 1
             else:
                 try:
                     bc_evaluator(statement)
                 except ZeroDivisionError:
                     things_to_be_printed.append('divide by zero')
+                    dbz_error += 1
                     break
                 except:
-                    errors += 1
+                    parse_error += 1
         elif '=' in statement:
             # assign a value to a variable
             var, expr = statement.split('=')
@@ -418,9 +425,10 @@ def bc_parser(input_expression):
                 VARIABLES[var.strip()] = value
             except ZeroDivisionError:
                 things_to_be_printed.append('divide by zero')
+                dbz_error += 1
                 break
             except:
-                errors += 1
+                parse_error += 1
         elif statement is None or len(statement) == 0:
             pass
         elif '++' in statement or '--' in statement or any(
@@ -429,13 +437,14 @@ def bc_parser(input_expression):
                 bc_evaluator(statement.strip())
             except ZeroDivisionError:
                 things_to_be_printed.append('divide by zero')
+                dbz_error += 1
                 break
             except:
-                errors += 1
+                parse_error += 1
         else:
             pass
         i += 1
-    if errors == 0:
+    if parse_error == 0:
         for p in things_to_be_printed:
             print(p)
     else:
