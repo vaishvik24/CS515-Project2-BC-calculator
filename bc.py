@@ -216,6 +216,7 @@ def bc_evaluator(tokens):
             else:
                 values.append(-1 * float(VARIABLES.get(value, 0.0)))
                 is_prev_variable, is_prev_operator = True, False
+            continue
         # Closing brace encountered, solve entire brace.
         elif tokens[i] == ')':
             while len(ops) != 0 and ops[-1] != '(':
@@ -458,3 +459,7 @@ def bc_calculator():
 
 
 bc_calculator()
+
+# ip_ = """x = 1 + 1 * (3 * -4) / 2
+# print x"""
+# bc_parser(ip_)
