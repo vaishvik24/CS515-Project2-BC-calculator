@@ -487,9 +487,9 @@ def bc_calculator():
     bc_parser(statements)
 
 
-# bc_calculator()
+bc_calculator()
 
-ip_ = """x=1
-y = -x++
-print x, y,z"""
-bc_parser(ip_)
+# ip_ = """x=1
+# y = -x++
+# print x, y,z"""
+# bc_parser(ip_)
