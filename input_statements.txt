@@ -1,2 +1,4 @@
+print x
 x = 1 - -1 + 1
-print x, 1
+y = w + z
+print x, 1, y

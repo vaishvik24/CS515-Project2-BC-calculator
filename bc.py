@@ -352,9 +352,13 @@ def bc_evaluator(tokens):
                     pass
             values.append(float(apply_operation(val2, val1, op)))
     # Top of 'values' contains result, return it.
-    if values[-1] in VARIABLES:
+    if len(values) == 0:
+        return 0.0
+    elif values[-1] in VARIABLES:
         return VARIABLES.get(values[-1])
-    return values[-1]
+    elif is_number_(values[-1]):
+        return values[-1]
+    return 0.0
 
 
 def bc_parser(input_expression):
