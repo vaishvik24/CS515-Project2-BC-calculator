@@ -296,12 +296,12 @@ def bc_evaluator(tokens):
                             else:
                                 VARIABLES[variable] -= 1
                                 values.append(float(VARIABLES[variable]))
-                        elif is_var_name(last_var):
-                            VARIABLES[last_var] = 0.0
+                        elif is_var_name(variable):
+                            VARIABLES[variable] = 0.0
                             if tokens[i] == '+':
-                                VARIABLES[last_var] += 1
+                                VARIABLES[variable] += 1
                             else:
-                                VARIABLES[last_var] -= 1
+                                VARIABLES[variable] -= 1
                         else:
                             raise Exception('post ++/-- can be applied to variables only')
                     else:
@@ -365,7 +365,7 @@ def bc_parser(input_expression):
     i = 0
     while i < len(statements):
         statement = statements[i]
-        if parse_error > 0 or dbz_error > 0:
+        if parse_error > 0:
             break
         if statement.strip().startswith('print'):
             # evaluate the expression(s) to be printed
@@ -384,7 +384,8 @@ def bc_parser(input_expression):
                 except:
                     parse_error += 1
                 values.append(str(value))
-            things_to_be_printed.append(' '.join(values))
+            if dbz_error > 0:
+                things_to_be_printed.append(' '.join(values))
         elif is_commented(statement):
             i = new_uncommented_line(i, statements)
             continue
@@ -393,7 +394,8 @@ def bc_parser(input_expression):
                 var = op_equals_var(statement)
                 VARIABLES[var.strip()] = bc_evaluator(statement.strip())
             except ZeroDivisionError:
-                things_to_be_printed.append('divide by zero')
+                if dbz_error > 0:
+                    things_to_be_printed.append('divide by zero')
                 dbz_error += 1
                 break
             except:
@@ -404,18 +406,20 @@ def bc_parser(input_expression):
                     var, exp = relational_cond_var(statement)
                     VARIABLES[var.strip()] = bc_evaluator(exp.strip())
                 except ZeroDivisionError:
-                    things_to_be_printed.append('divide by zero')
+                    if dbz_error > 0:
+                        things_to_be_printed.append('divide by zero')
                     dbz_error += 1
-                    break
+                    # break
                 except:
                     parse_error += 1
             else:
                 try:
                     bc_evaluator(statement)
                 except ZeroDivisionError:
-                    things_to_be_printed.append('divide by zero')
+                    if dbz_error > 0:
+                        things_to_be_printed.append('divide by zero')
                     dbz_error += 1
-                    break
+                    # break
                 except:
                     parse_error += 1
         elif '=' in statement:
@@ -425,9 +429,10 @@ def bc_parser(input_expression):
                 value = bc_evaluator(expr.strip())
                 VARIABLES[var.strip()] = value
             except ZeroDivisionError:
-                things_to_be_printed.append('divide by zero')
+                if dbz_error > 0:
+                    things_to_be_printed.append('divide by zero')
                 dbz_error += 1
-                break
+                # break
             except:
                 parse_error += 1
         elif statement is None or len(statement) == 0:
@@ -437,9 +442,10 @@ def bc_parser(input_expression):
             try:
                 bc_evaluator(statement.strip())
             except ZeroDivisionError:
-                things_to_be_printed.append('divide by zero')
+                if dbz_error > 0:
+                    things_to_be_printed.append('divide by zero')
                 dbz_error += 1
-                break
+                # break
             except:
                 parse_error += 1
         else:
@@ -460,6 +466,7 @@ def bc_calculator():
 
 bc_calculator()
 
-# ip_ = """x = 1 + 1 * (3 * -4) / 2
-# print x"""
+# ip_ = """x = 5
+# y= -x++
+# print x, y"""
 # bc_parser(ip_)
