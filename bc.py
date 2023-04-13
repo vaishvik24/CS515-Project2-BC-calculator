@@ -216,6 +216,12 @@ def bc_evaluator(tokens):
             else:
                 if value not in VARIABLES:
                     VARIABLES[value] = 0.0
+                if tokens[i:i + 2] == '++' or tokens[i:i + 2] == '--':
+                    if tokens[i] == '+':
+                        VARIABLES[value] += 1
+                    else:
+                        VARIABLES[value] -= 1
+                    i += 2
                 values.append(-1 * float(VARIABLES.get(value)))
                 is_prev_variable, is_prev_operator = True, False
             continue
@@ -344,6 +350,7 @@ def bc_evaluator(tokens):
             is_prev_variable, is_prev_operator = False, True
         else:
             is_prev_variable, is_prev_operator = False, True
+            raise Exception('invalid')
         i += 1
     # Entire expression has been parsed at this point, apply remaining ops to remaining values.
     while len(ops) != 0:
@@ -374,7 +381,8 @@ def bc_evaluator(tokens):
         return VARIABLES.get(values[-1])
     elif is_number_(values[-1]):
         return values[-1]
-    return 0.0
+    else:
+        return 0.0
 
 
 def bc_parser(input_expression):
@@ -452,8 +460,7 @@ def bc_parser(input_expression):
                 parse_error += 1
         elif statement is None or len(statement) == 0:
             pass
-        elif '++' in statement or '--' in statement or any(
-                op in statement for op in (binary_operators + boolean_operators + unary_operators)):
+        else:
             try:
                 bc_evaluator(statement.strip())
             except ZeroDivisionError:
@@ -462,8 +469,18 @@ def bc_parser(input_expression):
                 dbz_error += 1
             except:
                 parse_error += 1
-        else:
-            pass
+        # elif '++' in statement or '--' in statement or any(
+        #         op in statement for op in (binary_operators + boolean_operators + unary_operators)):
+        #     try:
+        #         bc_evaluator(statement.strip())
+        #     except ZeroDivisionError:
+        #         if dbz_error == 0:
+        #             things_to_be_printed.append('divide by zero')
+        #         dbz_error += 1
+        #     except:
+        #         parse_error += 1
+        # else:
+        #     pass
         i += 1
     if parse_error == 0:
         for p in things_to_be_printed:
@@ -480,7 +497,8 @@ def bc_calculator():
 
 bc_calculator()
 
-# ip_ = """x = 5
+# ip_ = """print 1
+# x=1
 # y= -x++
 # print x, y"""
 # bc_parser(ip_)
