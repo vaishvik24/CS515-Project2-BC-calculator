@@ -39,7 +39,8 @@
 I've implemented 4 extensions. 
 Each extension is described as below:
 ### Op-equals:
-- todo
+- Op-equals extension helps us to evaluate the expressions containing  +=, -=, *=, /=, %= and ^= operators. In the bc_parser, each line is checked whether it contains the above mentioned operators. if yes, it is directed to operator parser function to strip the whitespaces and validate the string contains alphanumeric characters. It returns the processed string and passed into bc_calculator function as an input argument
+- The next step is identifying the operator in the string and performing the operation accordingly and storing the updated variable name and its value in VARIABLES dictionary which created at the beginning. All operators are stored in stacks and validated using BODMAS rules. Error handling is done for this case when invalid operators such as '++' or '--' are present. it catches in excpetion it can be used only on variables. 
 
 ### Binary Operators:
 - todo
