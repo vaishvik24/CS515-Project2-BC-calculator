@@ -46,7 +46,8 @@ Each extension is described as below:
 - 
 
 ### Comments:
-- todo
+- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with /* or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
+- Till the line contains "*/" the i index increments making the parser to ignore the lines whatever given in between /* and /*. In this way the extension works and ignores the commented input lines 
 
 ### Relational Operations:
 - todo
