@@ -394,8 +394,7 @@ def bc_parser(input_expression):
                 var = op_equals_var(statement)
                 VARIABLES[var.strip()] = bc_evaluator(statement.strip())
             except ZeroDivisionError:
-                if dbz_error > 0:
-                    things_to_be_printed.append('divide by zero')
+                things_to_be_printed.append('divide by zero')
                 dbz_error += 1
                 break
             except:
@@ -406,8 +405,7 @@ def bc_parser(input_expression):
                     var, exp = relational_cond_var(statement)
                     VARIABLES[var.strip()] = bc_evaluator(exp.strip())
                 except ZeroDivisionError:
-                    if dbz_error > 0:
-                        things_to_be_printed.append('divide by zero')
+                    things_to_be_printed.append('divide by zero')
                     dbz_error += 1
                     # break
                 except:
@@ -416,8 +414,7 @@ def bc_parser(input_expression):
                 try:
                     bc_evaluator(statement)
                 except ZeroDivisionError:
-                    if dbz_error > 0:
-                        things_to_be_printed.append('divide by zero')
+                    things_to_be_printed.append('divide by zero')
                     dbz_error += 1
                     # break
                 except:
