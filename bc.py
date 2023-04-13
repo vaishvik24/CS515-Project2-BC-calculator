@@ -474,18 +474,18 @@ def bc_parser(input_expression):
         print('parse error')
 
 
-input_str11 = """
-x = 1
-yzw = 123
-y = x - -yzw + 1
-w = ++x
-z = x && 0 && 1 || 0
-
-print x, y, !!!!x, w, z
-print x, 1,2,34
-"""
-
-bc_parser(input_str11)
+# input_str11 = """
+# x = 1
+# yzw = 123
+# y = x - -yzw + 1
+# w = ++x
+# z = x && 0 && 1 || 0
+#
+# print x, y, !!!!x, w, z
+# print x, 1,2,34
+# """
+#
+# bc_parser(input_str11)
 
 
 # main function - takes input from std in and pass it to bc parser
@@ -493,4 +493,4 @@ def bc_calculator():
     statements = sys.stdin.read()
     bc_parser(statements)
 
-# bc_calculator()
+bc_calculator()
