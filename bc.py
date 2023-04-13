@@ -156,7 +156,7 @@ def next_varnum(index, tokens):
         while index < len(tokens) and (tokens[index].isalnum() or tokens[index] == '_'):
             variable += tokens[index]
             index += 1
-        return variable in VARIABLES, variable, index
+        return True, variable, index
 
     return False, None
 
@@ -215,7 +215,7 @@ def bc_evaluator(tokens):
                 is_prev_variable, is_prev_operator = False, False
                 is_prev_operator = False
             else:
-                values.append(-1 * float(VARIABLES.get(value)))
+                values.append(-1 * float(VARIABLES.get(value, 0.0)))
                 is_prev_variable, is_prev_operator = True, False
 
         # Closing brace encountered, solve entire brace.
@@ -226,10 +226,11 @@ def bc_evaluator(tokens):
                 if op in unary_operators:
                     val1 = values.pop()
                     if not is_number_(val1):
-                        if val1 in VARIABLES:
-                            val1 = VARIABLES.get(val1)
-                        else:
-                            pass
+                        val1 = VARIABLES.get(val1, 0.0)
+                        # if val1 in VARIABLES:
+                        #     val1 = VARIABLES.get(val1)
+                        # else:
+                        #     pass
                     values.append(float(apply_unary_ops(float(val1), op)))
 
                 else:
@@ -237,16 +238,18 @@ def bc_evaluator(tokens):
                     val1 = values.pop()
 
                     if not is_number_(val1):
-                        if val1 in VARIABLES:
-                            val1 = VARIABLES.get(val1)
-                        else:
-                            pass
+                        val1 = VARIABLES.get(val1, 0.0)
+                        # if val1 in VARIABLES:
+                        #     val1 = VARIABLES.get(val1)
+                        # else:
+                        #     pass
 
                     if not is_number_(val2):
-                        if val2 in VARIABLES:
-                            val2 = VARIABLES.get(val2)
-                        else:
-                            pass
+                        val2 = VARIABLES.get(val2, 0.0)
+                        # if val2 in VARIABLES:
+                        #     val2 = VARIABLES.get(val2)
+                        # else:
+                        #     pass
                     values.append(float(apply_operation(val2, val1, op)))
 
             is_prev_variable, is_prev_operator = False, False
@@ -281,14 +284,20 @@ def bc_evaluator(tokens):
                     i += 1
                     # pop last variable and do this operation
                     last_var = values.pop()
-                    if last_var in VARIABLES:
-                        values.append(float(VARIABLES[last_var]))
-                        if tokens[i] == '+':
-                            VARIABLES[last_var] += 1
-                        else:
-                            VARIABLES[last_var] -= 1
+                    last_var = VARIABLES.get(last_var, 0.0)
+                    values.append(float(VARIABLES.get(last_var, 0.0)))
+                    if tokens[i] == '+':
+                        VARIABLES[last_var] += 1
                     else:
-                        raise Exception('post ++/-- can be applied to variables only')
+                        VARIABLES[last_var] -= 1
+                    # if last_var in VARIABLES:
+                    #     values.append(float(VARIABLES[last_var]))
+                    #     if tokens[i] == '+':
+                    #         VARIABLES[last_var] += 1
+                    #     else:
+                    #         VARIABLES[last_var] -= 1
+                    # else:
+                    #     raise Exception('post ++/-- can be applied to variables only')
                 else:
                     # get variable which next after ops (as this is pre inc/desc ops)
                     curr_ops = tokens[i]
@@ -303,15 +312,14 @@ def bc_evaluator(tokens):
                             i += 1
 
                         i -= 1
-                        if variable in VARIABLES:
-                            if curr_ops == '+':
-                                VARIABLES[variable] += 1
-                                values.append(float(VARIABLES[variable]))
-                            else:
-                                VARIABLES[variable] -= 1
-                                values.append(float(VARIABLES[variable]))
+                        if variable not in VARIABLES:
+                            VARIABLES[variable] = 0.0
+                        if curr_ops == '+':
+                            VARIABLES[variable] += 1.0
+                            values.append(float(VARIABLES[variable]))
                         else:
-                            raise Exception('post ++/-- can be applied to variables only')
+                            VARIABLES[variable] -= 1.0
+                            values.append(float(VARIABLES[variable]))
 
                     else:
                         raise Exception('pre ++/-- can be applied to variables only.')
@@ -323,26 +331,29 @@ def bc_evaluator(tokens):
                     op = ops.pop()
                     if op in unary_operators:
                         val1 = values.pop()
-                        if not is_number_(val1):
-                            if val1 in VARIABLES:
-                                val1 = VARIABLES.get(val1)
-                            else:
-                                pass
+                        val1 = VARIABLES.get(val1, 0.0)
+                        # if not is_number_(val1):
+                        #     if val1 in VARIABLES:
+                        #         val1 = VARIABLES.get(val1)
+                        #     else:
+                        #         pass
                         values.append(float(apply_unary_ops(float(val1), op)))
 
                     else:
                         val2 = values.pop()
                         val1 = values.pop()
-                        if not is_number_(val1):
-                            if val1 in VARIABLES:
-                                val1 = VARIABLES.get(val1)
-                            else:
-                                pass
-                        if not is_number_(val2):
-                            if val2 in VARIABLES:
-                                val2 = VARIABLES.get(val2)
-                            else:
-                                pass
+                        val1 = VARIABLES.get(val1, 0.0)
+                        val2 = VARIABLES.get(val2, 0.0)
+                        # if not is_number_(val1):
+                        #     if val1 in VARIABLES:
+                        #         val1 = VARIABLES.get(val1)
+                        #     else:
+                        #         pass
+                        # if not is_number_(val2):
+                        #     if val2 in VARIABLES:
+                        #         val2 = VARIABLES.get(val2)
+                        #     else:
+                        #         pass
                         values.append(float(apply_operation(val2, val1, op)))
 
                 # Push current token to 'ops'.
@@ -359,27 +370,30 @@ def bc_evaluator(tokens):
         op = ops.pop()
         if op in unary_operators:
             val1 = values.pop()
-            if not is_number_(val1):
-                if val1 in VARIABLES:
-                    val1 = VARIABLES.get(val1)
-                else:
-                    pass
+            val1 = VARIABLES.get(val1, 0.0)
+            # if not is_number_(val1):
+            #     if val1 in VARIABLES:
+            #         val1 = VARIABLES.get(val1)
+            #     else:
+            #         pass
             values.append(float(apply_unary_ops(float(val1), op)))
 
         else:
             val2 = values.pop()
             val1 = values.pop()
-            if not is_number_(val1):
-                if val1 in VARIABLES:
-                    val1 = VARIABLES.get(val1)
-                else:
-                    pass
-
-            if not is_number_(val2):
-                if val2 in VARIABLES:
-                    val2 = VARIABLES.get(val2)
-                else:
-                    pass
+            val1 = VARIABLES.get(val1, 0.0)
+            val2 = VARIABLES.get(val2, 0.0)
+            # if not is_number_(val1):
+            #     if val1 in VARIABLES:
+            #         val1 = VARIABLES.get(val1)
+            #     else:
+            #         pass
+            #
+            # if not is_number_(val2):
+            #     if val2 in VARIABLES:
+            #         val2 = VARIABLES.get(val2)
+            #     else:
+            #         pass
             values.append(float(apply_operation(val2, val1, op)))
 
     # Top of 'values' contains result, return it.
@@ -474,18 +488,14 @@ def bc_parser(input_expression):
         print('parse error')
 
 
-# input_str11 = """
-# x = 1
-# yzw = 123
-# y = x - -yzw + 1
-# w = ++x
-# z = x && 0 && 1 || 0
-#
-# print x, y, !!!!x, w, z
-# print x, 1,2,34
-# """
-#
-# bc_parser(input_str11)
+input_str11 = """
+y = 1
+x = 1 + 1 + 2
+print x,y
+print 1,2,34
+"""
+
+bc_parser(input_str11)
 
 
 # main function - takes input from std in and pass it to bc parser
@@ -493,4 +503,4 @@ def bc_calculator():
     statements = sys.stdin.read()
     bc_parser(statements)
 
-bc_calculator()
+# bc_calculator()
