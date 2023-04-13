@@ -43,7 +43,7 @@ Each extension is described as below:
 - The next step is identifying the operator in the string and performing the operation accordingly and storing the updated variable name and its value in VARIABLES dictionary which created at the beginning. All operators are stored in stacks and validated using BODMAS rules. Error handling is done for this case when invalid operators such as '++' or '--' are present. it catches in excpetion it can be used only on variables. 
 
 ### Binary Operators:
-- todo
+- 
 
 ### Comments:
 - todo
