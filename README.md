@@ -79,7 +79,7 @@ print b<br>
 -> parse error
 
 
-### Binary Operators:
+### Boolean Operators:
 - Binary operations extension evaluates the input statements which contain mathematical expressions having ['&', '|', '!'] this operators. in each input line, the operators are recognized and stored in operators stacks, the line passed into bc_parser and then the variables are recognized and the experssion is evaluated using apply_operation(a,b,op) function which return the value.
 - In the bc_evaluator() function, the input is validated by checking whether the constant is present in variables dict and then access its value and perform the operation and then update the variable value in the dictionary. Error handling is done for this extension by catching error when input line contains '&&&' or '|||' in the expression since its valid only for binary and logic operations. For an expression to be evaluated, variable values stored in stacks are popped out and even the operator and then those are passed into apply_operation() function. 
 - In this way, the extension works and no errors have been found since every possibility is tried and the errors are caught and displayed when given invalid inputs
