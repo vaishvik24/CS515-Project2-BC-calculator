@@ -45,7 +45,38 @@ Each extension is described as below:
 1. x=1<br>
 x+=10<br>
 print x<br>
--> 11.0
+-> 11.0<br><br>
+2. x=3<br>
+y=4<br>
+z=x*y<br>
+print x,y,z<br>
+z*=2<br>
+print z<br>
+-> 3.0 4.0 12.0<br>
+24.0<br><br>
+3. x=12<br>
+x^=2<br>
+print x<br>
+x/=3<br>
+print x<br>
+x%=5<br>
+print x<br>
+-> 144.0<br>
+48.0<br>
+3.0<br><br>
+4. x=13<br>
+x=*2<br>
+print x<br>
+-> parse error<br><br>
+5. x=-4<br>
+x*=-4<br>
+print x<br>
+-> 16.0<br><br>
+6. a=12<br>
+b=-4<br>
+b-+=5<br>
+print b<br>
+-> parse error
 
 
 ### Binary Operators:
