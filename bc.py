@@ -288,6 +288,7 @@ def bc_evaluator(tokens):
                             VARIABLES[last_var] -= 1
                     elif is_var_name(last_var):
                         VARIABLES[last_var] = 0.0
+                        values.append(float(VARIABLES[last_var]))
                         if tokens[i] == '+':
                             VARIABLES[last_var] += 1
                         else:
@@ -316,6 +317,7 @@ def bc_evaluator(tokens):
                                 values.append(float(VARIABLES[variable]))
                         elif is_var_name(variable):
                             VARIABLES[variable] = 0.0
+                            values.append(float(VARIABLES[variable]))
                             if tokens[i] == '+':
                                 VARIABLES[variable] += 1
                             else:
