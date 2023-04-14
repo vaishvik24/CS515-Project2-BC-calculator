@@ -85,11 +85,11 @@ print b<br>
 - In this way, the extension works and no errors have been found since every possibility is tried and the errors are caught and displayed when given invalid inputs
 
 ### Comments:
-- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with /* or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
+- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with '/*' or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
 - Till the line contains "*/" the i index increments making the parser to ignore the lines whatever given in between /* and /*. In this way the extension works and ignores the commented input lines. The comment is recognized even with '#' symbol. One or more symbols can be considered as the comment and the commands won't execute post the symbol. In this way, this extension works
 - Test cases for this extension:
 1. a=20<br>
-/*<br>
+/**<br>
 a+=3<br>
 a*=4<br>
 b=6<br>
@@ -97,15 +97,15 @@ b=6<br>
 print a,b<br>
 -> 20.0 0.0<br><br>
 2. x=5<br>
-/*<br>
+\/*<br>
 x+=4<br>
 print x<br>
-/*<br>
+\/*<br>
 print x<br>
 -> No output since the comment is not closed with '*/'<br><br>
 3. x=6<br>
-# x+=9<br>
-## x+=8<br>
+\# x+=9<br>
+\## x+=8<br>
 print x<br>
 -> 6.0<br><br>
 
