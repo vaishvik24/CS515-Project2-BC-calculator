@@ -44,17 +44,17 @@ relational_operators = ['==', '<=', '>=', '!=', '<', '>']
 # Function to perform arithmetic operations.
 def apply_operation(a, b, op):
     if op == '+':
-        return a + b
+        return float(a + b)
     elif op == '-':
-        return b - a
+        return float(b - a)
     elif op == '*':
-        return a * b
+        return float(a * b)
     elif op == '/':
-        return b / a
+        return float(b / a)
     elif op == '^':
-        return b ** a
+        return float(b ** a)
     elif op == '%':
-        return b % a
+        return float(b % a)
     elif op == '&':
         return int(bool(a and b))
     elif op == '|':
@@ -209,26 +209,6 @@ def bc_evaluator(tokens):
             ops.append(tokens[i])
             values.append(0.0)
             is_prev_variable, is_prev_operator = False, True
-            # temp = next_varnum(i + 1, tokens)
-            # value = temp[1]
-            # i = temp[2]
-            # if isinstance(value, float):
-            #     values.append(-1 * float(value))
-            #     is_prev_variable, is_prev_operator = False, False
-            #     is_prev_operator = False
-            # else:
-            #     if value not in VARIABLES:
-            #         VARIABLES[value] = 0.0
-            #
-            #     if tokens[i:i + 2] == '++' or tokens[i:i + 2] == '--':
-            #         if tokens[i] == '+':
-            #             VARIABLES[value] += 1
-            #         else:
-            #             VARIABLES[value] -= 1
-            #         i += 2
-            #     values.append(-1 * float(VARIABLES.get(value)))
-            #     is_prev_variable, is_prev_operator = True, False
-            # continue
         # Closing brace encountered, solve entire brace.
         elif tokens[i] == ')':
             while len(ops) != 0 and ops[-1] != '(':
@@ -239,7 +219,7 @@ def bc_evaluator(tokens):
                         if val1 not in VARIABLES:
                             VARIABLES[val1] = 0.0
                         val1 = VARIABLES.get(val1)
-                    values.append(float(apply_unary_ops(float(val1), op)))
+                    values.append(apply_unary_ops(float(val1), op))
                 else:
                     val2 = values.pop()
                     val1 = values.pop()
@@ -251,7 +231,7 @@ def bc_evaluator(tokens):
                         if val2 not in VARIABLES:
                             VARIABLES[val2] = 0.0
                         val2 = VARIABLES.get(val2)
-                    values.append(float(apply_operation(val2, val1, op)))
+                    values.append(apply_operation(val2, val1, op))
             is_prev_variable, is_prev_operator = False, False
             ops.pop()
         elif tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '=':
@@ -338,7 +318,7 @@ def bc_evaluator(tokens):
                             if val1 not in VARIABLES:
                                 VARIABLES[val1] = 0.0
                             val1 = VARIABLES.get(val1)
-                        values.append(float(apply_unary_ops(float(val1), op)))
+                        values.append(apply_unary_ops(float(val1), op))
                     else:
                         val2 = values.pop()
                         val1 = values.pop()
@@ -350,7 +330,7 @@ def bc_evaluator(tokens):
                             if val2 not in VARIABLES:
                                 VARIABLES[val2] = 0.0
                             val2 = VARIABLES.get(val2)
-                        values.append(float(apply_operation(val2, val1, op)))
+                        values.append(apply_operation(val2, val1, op))
                 # Push current token to 'ops'.
                 ops.append(tokens[i])
             is_prev_variable, is_prev_operator = False, True
@@ -367,7 +347,7 @@ def bc_evaluator(tokens):
                 if val1 not in VARIABLES:
                     VARIABLES[val1] = 0.0
                 val1 = VARIABLES.get(val1)
-            values.append(float(apply_unary_ops(float(val1), op)))
+            values.append(apply_unary_ops(float(val1), op))
         else:
             val2 = values.pop()
             val1 = values.pop()
@@ -379,7 +359,7 @@ def bc_evaluator(tokens):
                 if val2 not in VARIABLES:
                     VARIABLES[val2] = 0.0
                 val2 = VARIABLES.get(val2)
-            values.append(float(apply_operation(val2, val1, op)))
+            values.append(apply_operation(val2, val1, op))
     # Top of 'values' contains result, return it.
     if len(values) == 0:
         return 0.0
