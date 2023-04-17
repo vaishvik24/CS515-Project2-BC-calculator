@@ -215,12 +215,12 @@ Each extension is described as below:
   
     2. input:
     ```
-    print x < 2 <= 2 < 3, 1 != 1 || 0
+    print x < 2 <= 2 < 3, 1 != 1, 1 > 2 <= 4 <= 5 < 8
     ```
 
     - output:
     ```
-    1 1
+    1 0 0
     ```
 ## 🏃‍Run Guide
 

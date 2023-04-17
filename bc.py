@@ -355,9 +355,9 @@ def bc_evaluator(tokens):
             i += jump_ind
             is_prev_variable, is_prev_operator = False, True
             continue
-        elif tokens[i] in relational_operators or (i + 1 < len(tokens) and tokens[i:i + 2] in relational_operators):
+        elif tokens[i] in relational_operators or tokens[i:i + 2] in relational_operators:
             curr_ops = tokens[i]
-            if i + 1 < len(tokens) and tokens[i:i + 2] in relational_operators:
+            if tokens[i:i + 2] in relational_operators:
                 curr_ops = tokens[i:i + 2]
                 i += 1
             ops.append(curr_ops)
@@ -453,6 +453,28 @@ def bc_evaluator(tokens):
             is_prev_variable, is_prev_operator = False, True
             raise Exception('invalid')
         i += 1
+
+    if is_relational_cond(tokens):
+        j = 0
+        while j < len(ops):
+            op = ops[j]
+            val1 = values[j]
+            val2 = values[j + 1]
+            if not is_number_(val1):
+                if val1 not in VARIABLES:
+                    VARIABLES[val1] = 0.0
+                val1 = VARIABLES.get(val1)
+            if not is_number_(val2):
+                if val2 not in VARIABLES:
+                    VARIABLES[val2] = 0.0
+                val2 = VARIABLES.get(val2)
+            result = apply_operation(val2, val1, op)
+            if result == 0:
+                return 0
+            j += 1
+        if j == len(ops):
+            return 1
+
     # Entire expression has been parsed at this point, apply remaining ops to remaining values.
     while len(ops) != 0:
         op = ops.pop()
@@ -613,5 +635,6 @@ def bc_calculator():
 # calls main executor function which takes input from stdin and start evaluation
 bc_calculator()
 
-# ip_ = """"""
+# ip_ = """print x < 2 <= 2 < 3, 1 != 1 + 1
+# """
 # bc_parser(ip_)

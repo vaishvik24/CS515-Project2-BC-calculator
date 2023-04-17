@@ -1,6 +1,1 @@
-x = 2 /* assigning value to x
-lets print it 
-now lets print it */
-print x
-y = 5 /* assign y to 5 */ + x /* now adding x to it */
-print x, y # printing value
+print x < 2 <= 2 < 3, 1 != 1, 1 > 2 <= 4 <= 5 < 8
