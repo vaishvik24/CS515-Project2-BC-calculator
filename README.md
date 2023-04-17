@@ -41,43 +41,53 @@ Each extension is described as below:
 ### Op-equals:
 - Op-equals extension helps us to evaluate the expressions containing  `+=, -=, *=, /=, %=, ^=, &&=, !!=` operators. 
 - The format for Op-equals is `VAR OP= ARG` means the `op` is applied on `VAR` with argument `ARG`. Usually, all binary operators can be used in Op-equals. 
-- Technically, `x op= y` is equal to `x = x op y`.
-- Refer below example for better understanding and context.
-1. x=1<br>
-x+=10<br>
-print x<br>
--> 11.0<br><br>
-2. x=3<br>
-y=4<br>
-z=x*y<br>
-print x,y,z<br>
-z*=2<br>
-print z<br>
--> 3.0 4.0 12.0<br>
-24.0<br><br>
-3. x=12<br>
-x^=2<br>
-print x<br>
-x/=3<br>
-print x<br>
-x%=5<br>
-print x<br>
--> 144.0<br>
-48.0<br>
-3.0<br><br>
-4. x=13<br>
-x=*2<br>
-print x<br>
--> parse error<br><br>
-5. x=-4<br>
-x*=-4<br>
-print x<br>
--> 16.0<br><br>
-6. a=12<br>
-b=-4<br>
-b-+=5<br>
-print b<br>
--> parse error
+  - Technically, `x op= y` is equal to `x = x op y`.
+    - Refer below example for better understanding and context.
+    1. input: 
+         ```
+       x = 3
+       y = 2
+       x += 1
+       y -= 1
+       print x, y
+       x *= 2
+       y /= 1.5
+       print x, y
+         ```
+  
+         - output: 
+         ```
+         4.0 1.0
+         8.0 0.6666666666666666
+         ```
+    2. input: 
+       ```
+       x = 2.2
+       y = 1.3
+       x &&= 0
+       y ||= 0
+       print x, y
+       ```
+  
+       - output: 
+       ```
+       0 1
+       ```
+
+    3. input: 
+       ```
+       x = 5
+       y = 3
+       x += ( y + 1 - 3 * 5)
+       print x, y
+       y /= ( x - x)
+         ```
+  
+         - output: 
+         ```
+         -6.0 3.0
+         divide by zero
+         ```
 
 
 ### Boolean Operators:
@@ -89,17 +99,46 @@ print b<br>
 - `|| and &&` are left associative, while `!` is non-associative.
 - Test cases for this extension:
 
-1. x=5<br>
-y=0<br>
-print x&&y, x||y, !x<br>
--> 0 1 0<br><br>
-2. x=20<br>
-y=5<br>
-print x&y, x&&&y, x|||y<br>
--> parse error<br><br>
-3. print 1 && 2, 2 && 1, -5 && 1, 0 && -100<br>
--> 1 1 1 0
+    1. input:
+    ```
+    print 1 && 1, 1 && 0, 1 || 0, !1, !!1, !!!1
+    ```
+  
+    - output: 
+    ```
+    1 0 1 0 1 0
+    ```
+  
+    2. input:
+    ```
+    x = -2
+    y = 0
+    print (x || y) || ( 1 && 1 && 0 && 1 || 1) && y
+    print (x || y) || ( 1 && 1 && 0 && 1 || 1) || y
+    print (x && y) && ( 1 && 1 && 0 && 1 || 1) || y
+    ```
+  
+    - output:
+    ```
+    0
+    1
+    0
+    ```
 
+    3. input:
+    ```
+    x = 1
+    x &&= 1
+    y ||= 0
+    print x, y
+    print !x && 4, 3 && !y && x && 5
+    ```
+  
+    - output:
+    ```
+    1 0
+    0 1
+    ```
 ### Comments:
 - Comments are used to improve more readability of written code. The parser just ignores the commented part of the input. 
 - Comments extension helps us to identify whether the input given is markdown or not.  
@@ -108,50 +147,68 @@ print x&y, x&&&y, x|||y<br>
   2. Single-line comments: it starts with `#`. It just comments the current one line only. 
 - As per specs, we don't have support for nested comments. Comment can appear anywhere inbetween input token. 
 - Test cases for this extension:
-1. a=20<br>
-/*<br>
-a+=3<br>
-a*=4<br>
-b=6<br>
-*/<br>
-print a,b<br>
--> 20.0 0.0<br><br>
-2. x=5<br>
-\/*<br>
-x+=4<br>
-print x<br>
-\/*<br>
-print x<br>
--> No output since the comment is not closed with '*/'<br><br>
-3. x=6<br>
-\# x+=9<br>
-\## x+=8<br>
-print x<br>
--> 6.0<br><br>
-
+    1. input:
+    ```
+    print 1
+    # print 2
+    # printing 333
+    print 4
+    print 5
+    /* print 6
+    print 7
+    print 8
+    print 9 */
+    print 10
+    ```
+    
+    - output:
+    ```
+    1.0
+    4.0
+    5.0
+    10.0
+    ```
+  
+    2. input:
+    ```
+    x = 2 /* assigning value to x
+    now lets print it */ print x
+    y = /* assign y to 5 */ 5
+    print x, y # printing value
+    ```
+  
+    - output:
+    ```
+    2.0
+    2.0 5.0
+    ```
 
 ### Relational Operations:
 - Relational operations extension evaluates the input statements which contain `'==', '<=', '>=', '!=', '<', '>'` operators.  
 - It represents true as `1` and false as `0`. Means the output 1 means the relation holds true for the input.
 - Relational operators should be left associative and lower precedence than arithmteic operators.
 - Test cases for this extension:
-1. x=10<br>
-y=4<br>
-print x==y<br>
--> 0.0<br><br>
-2. x=5<br>
-y=6<br>
-print y>x<br>
--> 1.0<br><br>
-3. x=12<br>
-y=43<br>
-print x==>y<br>
--> parse error<br><br>
-4. x=12<br>
-y=43<br>
-print x!=y<br>
--> 1.0<br><br>
 
+    1. input:
+    ```
+    x = 1 <= 2
+    print 1 == 1, 2 != 2, 5 >= 6, 4 <= 4 < 0, x
+    ```
+
+    - ouput:
+    ```
+    1 0 0 0 1
+    ```
+  
+    2. input:
+    ```
+    print x < 2 <= 2 < 3, 1 != 1 || 0
+    ```
+
+    - output:
+    ```
+    1 1
+    ```
 ## 🏃‍Run Guide
 
 - Install python 3 in your machine
