@@ -40,21 +40,108 @@ I've implemented 4 extensions.
 Each extension is described as below:
 ### Op-equals:
 - Op-equals extension helps us to evaluate the expressions containing  +=, -=, *=, /=, %= and ^= operators. In the bc_parser, each line is checked whether it contains the above mentioned operators. if yes, it is directed to operator parser function to strip the whitespaces and validate the string contains alphanumeric characters. It returns the processed string and passed into bc_calculator function as an input argument
-- The next step is identifying the operator in the string and performing the operation accordingly and storing the updated variable name and its value in VARIABLES dictionary which created at the beginning. All operators are stored in stacks and validated using BODMAS rules. Error handling is done for this case when invalid operators such as '++' or '--' are present. it catches in excpetion it can be used only on variables. 
+- The next step is identifying the operator in the string and performing the operation accordingly and storing the updated variable name and its value in VARIABLES dictionary which created at the beginning. All operators are stored in stacks and validated using BODMAS rules. Error handling is done for this case when invalid operators such as '++' or '--' are present. it catches in excpetion it can be used only on variables.
+- Test cases for this extension: 
+1. x=1<br>
+x+=10<br>
+print x<br>
+-> 11.0<br><br>
+2. x=3<br>
+y=4<br>
+z=x*y<br>
+print x,y,z<br>
+z*=2<br>
+print z<br>
+-> 3.0 4.0 12.0<br>
+24.0<br><br>
+3. x=12<br>
+x^=2<br>
+print x<br>
+x/=3<br>
+print x<br>
+x%=5<br>
+print x<br>
+-> 144.0<br>
+48.0<br>
+3.0<br><br>
+4. x=13<br>
+x=*2<br>
+print x<br>
+-> parse error<br><br>
+5. x=-4<br>
+x*=-4<br>
+print x<br>
+-> 16.0<br><br>
+6. a=12<br>
+b=-4<br>
+b-+=5<br>
+print b<br>
+-> parse error
 
-### Binary Operators:
-- Binary operations extension evaluates the input statements which contain mathematical expressions having ['+', '-', '*', '/', '^', '%'] this operators. in each input line, the operators are recognized and stored in operators stacks, the line passed into bc_parser and then the variables are recognized and the experssion is evaluated using apply_operation(a,b,op) function which return the value.
-- In the bc_evaluator() function, the input is validated by checking whether the constant is present in variables dict and then access its value and perform the operation and then update the variable value in the dictionary. Error handling is done for this extension by catching error when input line contains '++' in the expression since its valid only for the constants. For an expression to be evaluated, variable values stored in stacks are popped out and even the operator and then those are passed into apply_operation() function. 
+
+### Boolean Operators:
+- Binary operations extension evaluates the input statements which contain mathematical expressions having ['&', '|', '!'] this operators. in each input line, the operators are recognized and stored in operators stacks, the line passed into bc_parser and then the variables are recognized and the experssion is evaluated using apply_operation(a,b,op) function which return the value.
+- In the bc_evaluator() function, the input is validated by checking whether the constant is present in variables dict and then access its value and perform the operation and then update the variable value in the dictionary. Error handling is done for this extension by catching error when input line contains '&&&' or '|||' in the expression since its valid only for binary and logic operations. For an expression to be evaluated, variable values stored in stacks are popped out and even the operator and then those are passed into apply_operation() function. 
 - In this way, the extension works and no errors have been found since every possibility is tried and the errors are caught and displayed when given invalid inputs
+- Test cases for this extension:
+1. x=5<br>
+y=0<br>
+print x&&y, x||y, !x<br>
+-> 0 1 0<br><br>
+2. x=20<br>
+y=5<br>
+print x&y, x&&&y, x|||y<br>
+-> parse error<br><br>
+3. print 1 && 2, 2 && 1, -5 && 1, 0 && -100<br>
+-> 1 1 1 0
 
 ### Comments:
-- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with /* or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
-- Till the line contains "*/" the i index increments making the parser to ignore the lines whatever given in between /* and /*. In this way the extension works and ignores the commented input lines. In this way, this extension works
+- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with '/*' or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
+- Till the line contains "*/" the i index increments making the parser to ignore the lines whatever given in between /* and /*. In this way the extension works and ignores the commented input lines. The comment is recognized even with '#' symbol. One or more symbols can be considered as the comment and the commands won't execute post the symbol. In this way, this extension works
+- Test cases for this extension:
+1. a=20<br>
+/*<br>
+a+=3<br>
+a*=4<br>
+b=6<br>
+*/<br>
+print a,b<br>
+-> 20.0 0.0<br><br>
+2. x=5<br>
+\/*<br>
+x+=4<br>
+print x<br>
+\/*<br>
+print x<br>
+-> No output since the comment is not closed with '*/'<br><br>
+3. x=6<br>
+\# x+=9<br>
+\## x+=8<br>
+print x<br>
+-> 6.0<br><br>
+
 
 ### Relational Operations:
 - Relational operations extension evaluates the input statements which contain ['==', '<=', '>=', '!=', '<', '>'] this operators. Every operation returns the boolean value and is checked between two variables. The input line is checked whether it contains any of the above operators using the is_relational_cond() condition which is used in the bc_parser() function. Then, it is checked whether it contains any variables which are not defined. 
 - It is then passed into relational_cond_var() function to collect variable and the value present in the relation. After processing the input and then getting the variable and the value from the function, these two are passed into bc_evaluator function and it is evaluated inside the function. 
 - Error handling is done for this Extension catching Zero division error and Parsing error. In this way this extension is implemented. 
+- Test cases for this extension:
+1. x=10<br>
+y=4<br>
+print x==y<br>
+-> 0.0<br><br>
+2. x=5<br>
+y=6<br>
+print y>x<br>
+-> 1.0<br><br>
+3. x=12<br>
+y=43<br>
+print x==>y<br>
+-> parse error<br><br>
+4. x=12<br>
+y=43<br>
+print x!=y<br>
+-> 1.0<br><br>
 
 ## 🏃‍Run Guide
 
