@@ -38,7 +38,7 @@
 ## 🧩 Extensions:
 I've implemented 4 extensions. 
 Each extension is described as below:
-### Op-equals:
+### 1. Op-equals:
 - Op-equals extension helps us to evaluate the expressions containing  `+=, -=, *=, /=, %=, ^=, &&=, !!=` operators. 
 - The format for Op-equals is `VAR OP= ARG` means the `op` is applied on `VAR` with argument `ARG`. Usually, all binary operators can be used in Op-equals. 
   - Technically, `x op= y` is equal to `x = x op y`.
@@ -90,7 +90,7 @@ Each extension is described as below:
          ```
 
 
-### Boolean Operators:
+### 2. Boolean Operators:
 - Binary operations extension evaluates the input statements which contain mathematical expressions having `&& (and), || (or), ! (negation)` operators. `&` and `|` are binary operator while `!` is unary operator. 
 - The output for any boolean expression would `1` means true or `0` means false. Generally, each non-zero number is treated as `true`. 
 - `& (and), | (or)` : supports Op-equals operation too as these are binary operator and updates LHS variable too. 
@@ -139,7 +139,7 @@ Each extension is described as below:
     1 0
     0 1
     ```
-### Comments:
+### 3. Comments:
 - Comments are used to improve more readability of written code. The parser just ignores the commented part of the input. 
 - Comments extension helps us to identify whether the input given is markdown or not.  
 - Comments can be done in 2 ways:
@@ -183,7 +183,7 @@ Each extension is described as below:
     2.0 5.0
     ```
 
-### Relational Operations:
+### 4. Relational Operations:
 - Relational operations extension evaluates the input statements which contain `'==', '<=', '>=', '!=', '<', '>'` operators.  
 - It represents true as `1` and false as `0`. Means the output 1 means the relation holds true for the input.
 - Relational operators should be left associative and lower precedence than arithmteic operators.
