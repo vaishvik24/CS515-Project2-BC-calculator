@@ -40,54 +40,55 @@ I've implemented 4 extensions.
 Each extension is described as below:
 ### 1. Op-equals:
 - Op-equals extension helps us to evaluate the expressions containing  `+=, -=, *=, /=, %=, ^=, &&=, !!=` operators. 
-- The format for Op-equals is `VAR OP= ARG` means the `op` is applied on `VAR` with argument `ARG`. Usually, all binary operators can be used in Op-equals. 
-  - Technically, `x op= y` is equal to `x = x op y`.
-    - Refer below example for better understanding and context.
-    1. input: 
-         ```
-       x = 3
-       y = 2
-       x += 1
-       y -= 1
-       print x, y
-       x *= 2
-       y /= 1.5
-       print x, y
-         ```
-  
-         - output: 
-         ```
-         4.0 1.0
-         8.0 0.6666666666666666
-         ```
-    2. input: 
-       ```
-       x = 2.2
-       y = 1.3
-       x &&= 0
-       y ||= 0
-       print x, y
-       ```
-  
-       - output: 
-       ```
-       0 1
-       ```
+  - The format for Op-equals is `VAR OP= ARG` means the `op` is applied on `VAR` with argument `ARG`. Usually, all binary operators can be used in Op-equals. 
+    - Technically, `x op= y` is equal to `x = x op y`.
+      - Refer below example for better understanding and context.
+  1. input: 
+    ```
+    x = 3
+    y = 2
+    x += 1
+    y -= 1
+    print x, y
+    x *= 2
+    y /= 1.5
+    print x, y
+    ```
 
-    3. input: 
-       ```
-       x = 5
-       y = 3
-       x += ( y + 1 - 3 * 5)
-       print x, y
-       y /= ( x - x)
-         ```
-  
-         - output: 
-         ```
-         -6.0 3.0
-         divide by zero
-         ```
+   - output: 
+    ```
+    4.0 1.0
+    8.0 0.6666666666666666
+    ```
+   
+    2. input: 
+    ```
+    x = 2.2
+    y = 1.3
+    x &&= 0
+    y ||= 0
+    print x, y
+    ```
+    
+    - output: 
+    ```
+    0 1
+    ```
+
+   3. input: 
+    ```
+    x = 5
+    y = 3
+    x += ( y + 1 - 3 * 5)
+    print x, y
+    y /= ( x - x)
+    ```
+    
+    - output: 
+    ```
+    -6.0 3.0
+    divide by zero
+    ```
 
 
 ### 2. Boolean Operators:
