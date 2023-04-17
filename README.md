@@ -4,16 +4,16 @@
 
 # CS 515: Project 2 - BC Calculator 🎮 
 
-##  ⏰ Estimated hours: 33 hours
+##  ⏰ Estimated hours: 39 hours
 
 | Hours |                 Work                  |
 |-------|:-------------------------------------:|
 | 2     |    planning and managing the tasks    |
 | 4     |    reading and understanding flow     |
-| 12    |        implementing base flow         |
+| 15    |        implementing base flow         |
 | 6     |       implementing 4 extensions       |
 | 5     |    modification & refactoring code    |
-| 2     |   testing code along with bug fixes   |
+| 5     |   testing code along with bug fixes   |
 | 2     | creating README doc and GitHub set up |
 
 ##  🧪 Testing
