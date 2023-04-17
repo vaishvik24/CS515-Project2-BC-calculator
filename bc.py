@@ -147,6 +147,14 @@ def new_uncommented_line(i, statements):
         return i
 
 
+def check_op_equals(i, tokens):
+    if tokens[i] in (binary_operators + unary_operators):
+        return i + 1 < len(tokens) and tokens[i + 1] == '=', 2
+    elif tokens[i] in boolean_operators:
+        return i + 2 < len(tokens) and tokens[i + 1] == tokens[i] and tokens[i + 2] == '=', 3
+    else:
+        return False, 0
+        # tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '='
 def next_varnum(index, tokens):
     if tokens[index].isdigit():
         val_str = ''
@@ -234,12 +242,18 @@ def bc_evaluator(tokens):
                     values.append(apply_operation(val2, val1, op))
             is_prev_variable, is_prev_operator = False, False
             ops.pop()
-        elif tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '=':
+        elif check_op_equals(i, tokens)[0]:
             # op-equals extension
             ops.append(tokens[i])
-            i += 2
+            jump_ind = check_op_equals(i, tokens)[1]
+            i += jump_ind
             is_prev_variable, is_prev_operator = False, True
-            continue
+        # elif tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '=':
+        #     # op-equals extension
+        #     ops.append(tokens[i])
+        #     i += 2
+        #     is_prev_variable, is_prev_operator = False, True
+        #     continue
         elif tokens[i] in relational_operators or (i + 1 < len(tokens) and tokens[i:i + 2] in relational_operators):
             curr_ops = tokens[i]
             if i + 1 < len(tokens) and tokens[i:i + 2] in relational_operators:
@@ -471,7 +485,6 @@ def bc_calculator():
 
 bc_calculator()
 
-# ip_ = """x=1
-# y = -x++
-# print x, y,z"""
+# ip_ = """
+# """
 # bc_parser(ip_)
