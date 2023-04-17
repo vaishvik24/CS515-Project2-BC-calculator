@@ -255,6 +255,9 @@ def next_varnum(index, tokens):
     return False, None
 
 
+is_commented_stage = False
+
+
 # Function that returns value of expression after evaluation.
 def bc_evaluator(tokens):
     """
@@ -270,8 +273,26 @@ def bc_evaluator(tokens):
     # stack to store operators.
     ops = []
     i = 0
+    global is_commented_stage
     while i < len(tokens):
         # Current token is a whitespace, skip it.
+        if tokens[i] == '#':
+            break
+
+        if tokens[i:i + 2] == '/*' and not is_commented_stage:
+            is_commented_stage = True
+            i += 2
+            continue
+
+        if tokens[i: i + 2] == '*/' and is_commented_stage:
+            is_commented_stage = False
+            i += 2
+            continue
+
+        if is_commented_stage:
+            i += 1
+            continue
+
         if tokens[i] == ' ':
             i += 1
             continue
@@ -475,10 +496,22 @@ def bc_parser(input_expression):
     dbz_error = 0
     things_to_be_printed = []
     i = 0
+    global is_commented_stage
     while i < len(statements):
         statement = statements[i]
         if parse_error > 0:
             break
+
+        if is_commented_stage and '*/' not in statement:
+            i += 1
+            continue
+
+        if '*/' in statement and is_commented_stage:
+            index = statement.find("*/")
+            is_commented_stage = False
+            if index != -1:
+                statement = statement[index + 2:].strip()
+
         if statement.strip().startswith('print'):
             # evaluate the expression(s) to be printed
             expr = statement[6:].strip().replace(' ', '')
@@ -573,6 +606,5 @@ def bc_calculator():
 # calls main executor function which takes input from stdin and start evaluation
 bc_calculator()
 
-# ip_ = """
-# """
+# ip_ = """"""
 # bc_parser(ip_)

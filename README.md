@@ -173,15 +173,16 @@ Each extension is described as below:
     2. input:
     ```
     x = 2 /* assigning value to x
+    lets print it 
     now lets print it */ print x
-    y = /* assign y to 5 */ 5
+    y = 5 /* assign y to 5 */ + x /* now adding x to it */
     print x, y # printing value
     ```
   
     - output:
     ```
     2.0
-    2.0 5.0
+    2.0 7.0
     ```
 
 ### 4. Relational Operations:
