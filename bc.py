@@ -412,11 +412,11 @@ def bc_evaluator(tokens):
                                 values.append(float(VARIABLES[variable]))
                         elif is_var_name(variable):
                             VARIABLES[variable] = 0.0
-                            values.append(float(VARIABLES[variable]))
-                            if tokens[i] == '+':
+                            if curr_ops == '+':
                                 VARIABLES[variable] += 1
                             else:
                                 VARIABLES[variable] -= 1
+                            values.append(float(VARIABLES[variable]))
                         else:
                             raise Exception('post ++/-- can be applied to variables only')
                     else:
