@@ -421,6 +421,7 @@ def bc_evaluator(tokens):
                             raise Exception('post ++/-- can be applied to variables only')
                     else:
                         raise Exception('pre ++/-- can be applied to variables only.')
+                    is_prev_variable, is_prev_operator = True, False
             # normal single operator case
             else:
                 if i + 1 < len(tokens) and tokens[i] == tokens[i + 1]:
@@ -448,7 +449,7 @@ def bc_evaluator(tokens):
                         values.append(apply_operation(val2, val1, op))
                 # Push current token to 'ops'.
                 ops.append(tokens[i])
-            is_prev_variable, is_prev_operator = False, True
+                is_prev_variable, is_prev_operator = False, True
         else:
             is_prev_variable, is_prev_operator = False, True
             raise Exception('invalid')
@@ -635,6 +636,6 @@ def bc_calculator():
 # calls main executor function which takes input from stdin and start evaluation
 bc_calculator()
 
-# ip_ = """print x < 2 <= 2 < 3, 1 != 1 + 1
+# ip_ = """print x--y
 # """
 # bc_parser(ip_)
