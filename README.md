@@ -186,6 +186,16 @@ Each extension is described as below:
     2.0 7.0
     ```
 
+    3. input:
+    ```
+    x = 1 /* assign value 1 to x
+    now print it */ print x
+    ```
+    - output:
+    ```
+    parse error
+    ```
+    - The reason is that there's no newline separating the two statements.
 ### 4. Relational Operations:
 - Relational operations extension evaluates the input statements which contain `'==', '<=', '>=', '!=', '<', '>'` operators.  
 - It represents true as `1` and false as `0`. Means the output 1 means the relation holds true for the input.
