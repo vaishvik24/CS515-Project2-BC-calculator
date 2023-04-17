@@ -222,6 +222,15 @@ Each extension is described as below:
     ```
     1 0 0
     ```
+
+   3. input:
+    ```
+    y = 1 << 2
+    ```
+    - output:
+    ```
+    parse error
+    ```
 ## 🏃‍Run Guide
 
 - Install python 3 in your machine
