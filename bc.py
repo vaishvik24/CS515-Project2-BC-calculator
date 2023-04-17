@@ -507,10 +507,17 @@ def bc_parser(input_expression):
             continue
 
         if '*/' in statement and is_commented_stage:
-            index = statement.find("*/")
-            is_commented_stage = False
-            if index != -1:
-                statement = statement[index + 2:].strip()
+            if statement.endswith('*/'):
+                is_commented_stage = False
+                i += 1
+                continue
+            else:
+                parse_error += 1
+                break
+            # index = statement.find("*/")
+            # is_commented_stage = False
+            # if index != -1:
+            #     statement = statement[index + 2:].strip()
 
         if statement.strip().startswith('print'):
             # evaluate the expression(s) to be printed

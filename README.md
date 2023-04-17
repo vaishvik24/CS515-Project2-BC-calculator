@@ -174,7 +174,8 @@ Each extension is described as below:
     ```
     x = 2 /* assigning value to x
     lets print it 
-    now lets print it */ print x
+    now lets print it */ 
+    print x
     y = 5 /* assign y to 5 */ + x /* now adding x to it */
     print x, y # printing value
     ```
