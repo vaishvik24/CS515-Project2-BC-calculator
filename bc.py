@@ -148,7 +148,7 @@ def new_uncommented_line(i, statements):
 
 
 def check_op_equals(i, tokens):
-    if tokens[i] in (binary_operators + unary_operators):
+    if tokens[i] in binary_operators:
         return i + 1 < len(tokens) and tokens[i + 1] == '=', 2
     elif tokens[i] in boolean_operators:
         return i + 2 < len(tokens) and tokens[i + 1] == tokens[i] and tokens[i + 2] == '=', 3
