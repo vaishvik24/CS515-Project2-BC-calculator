@@ -319,6 +319,7 @@ def bc_evaluator(tokens):
             values.append(variable)
             is_prev_variable, is_prev_operator = True, False
             i -= 1
+        # negative number check
         elif tokens[i] == '-' and is_prev_operator and next_varnum(i + 1, tokens)[0]:
             ops.append(tokens[i])
             values.append(0.0)
@@ -355,6 +356,7 @@ def bc_evaluator(tokens):
             i += jump_ind
             is_prev_variable, is_prev_operator = False, True
             continue
+        # relational operator check
         elif tokens[i] in relational_operators or tokens[i:i + 2] in relational_operators:
             curr_ops = tokens[i]
             if tokens[i:i + 2] in relational_operators:
@@ -366,7 +368,7 @@ def bc_evaluator(tokens):
         elif tokens[i] in unary_operators:
             ops.append(tokens[i])
             is_prev_variable, is_prev_operator = False, True
-        # Current token isf an operator.
+        # Current token is an operator.
         elif tokens[i] in (binary_operators + boolean_operators):
             # ++ / -- cases
             if (tokens[i] == '+' or tokens[i] == '-') and i + 1 < len(tokens) and tokens[i] == tokens[i + 1]:
@@ -452,7 +454,7 @@ def bc_evaluator(tokens):
                 is_prev_variable, is_prev_operator = False, True
         else:
             is_prev_variable, is_prev_operator = False, True
-            raise Exception('invalid')
+            raise Exception('invalid token')
         i += 1
 
     if is_relational_cond(tokens):
@@ -529,6 +531,7 @@ def bc_parser(input_expression):
             i += 1
             continue
 
+        # comment part checks
         if '*/' in statement and is_commented_stage:
             if statement.endswith('*/'):
                 is_commented_stage = False
@@ -537,10 +540,6 @@ def bc_parser(input_expression):
             else:
                 parse_error += 1
                 break
-            # index = statement.find("*/")
-            # is_commented_stage = False
-            # if index != -1:
-            #     statement = statement[index + 2:].strip()
 
         if statement.strip().startswith('print'):
             # evaluate the expression(s) to be printed
