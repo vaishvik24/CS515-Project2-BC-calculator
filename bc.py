@@ -1,11 +1,16 @@
 import sys
 
-# define some constants
+# stores all the variables defined in the inputs
 VARIABLES = {}
 
 
 # Function to find precedence of operators.
 def precedence(op):
+    """
+    Return the precedence order of the operator
+    :param op: operator
+    :return: precedence order
+    """
     if op == '+' or op == '-':
         return 1
     elif op == '*' or op == '/' or op == '%':
@@ -18,6 +23,11 @@ def precedence(op):
 
 
 def is_number_(s):
+    """
+    Checks whether string is a number or not
+    :param s: string
+    :return: boolean
+    """
     try:
         float(s)
         return True
@@ -26,6 +36,11 @@ def is_number_(s):
 
 
 def is_var_name(s):
+    """
+    Checks if string is variable or number
+    :param s:
+    :return:
+    """
     i = 0
     if s[i].isalpha():
         while i < len(s) and (s[i].isalnum() or s[i] == '_'):
@@ -35,6 +50,7 @@ def is_var_name(s):
         return False
 
 
+# some predefined operator symbols
 binary_operators = ['+', '-', '*', '/', '^', '%']
 boolean_operators = ['&', '|']
 unary_operators = ['!']
@@ -43,6 +59,13 @@ relational_operators = ['==', '<=', '>=', '!=', '<', '>']
 
 # Function to perform arithmetic operations.
 def apply_operation(a, b, op):
+    """
+    Takes float/int args and apply binary operation on it and return calculated result
+    :param a: float number input 1
+    :param b: float number input 2
+    :param op: operation
+    :return: evaluated number
+    """
     if op == '+':
         return float(a + b)
     elif op == '-':
@@ -76,6 +99,12 @@ def apply_operation(a, b, op):
 
 
 def apply_unary_ops(a, op):
+    """
+    Apply unary operation on the input number
+    :param a: input float number
+    :param op: unary operator
+    :return: evaluated result number
+    """
     if op == '!':
         return int(bool(not a))
     else:
@@ -83,21 +112,41 @@ def apply_unary_ops(a, op):
 
 
 def is_commented(statement):
+    """
+    Check whether if the input is commented or not
+    :param statement: token
+    :return: boolean
+    """
     statement = statement.strip()
     return statement.startswith('/*') or statement.startswith('#')
 
 
 def is_op_equals(statement):
+    """
+    check if the token is op-equals or not
+    :param statement: token input
+    :return: boolean
+    """
     statement = statement.replace(" ", "")
     return any((op + "=") in statement for op in (binary_operators + boolean_operators))
 
 
 def is_relational_cond(statement):
+    """
+    check if the token is relation condition or not
+    :param statement: token input
+    :return: boolean
+    """
     statement = statement.replace(" ", "")
     return any(op in statement for op in relational_operators)
 
 
 def has_assign_var(statement):
+    """
+    check if its assignment operator or not
+    :param statement: token input
+    :return: boolean
+    """
     statement = statement.replace(" ", "")
     for i in statement:
         if i.isalnum() or i == '_':
@@ -110,6 +159,11 @@ def has_assign_var(statement):
 
 
 def relational_cond_var(statement):
+    """
+    parse relation condition based token for evaluation
+    :param statement: token input
+    :return: variable and remaining token
+    """
     statement = statement.replace(" ", "")
     var = ''
     i = 0
@@ -124,6 +178,11 @@ def relational_cond_var(statement):
 
 
 def op_equals_var(statement):
+    """
+    parse token for op equal evaluation
+    :param statement: token
+    :return: variable
+    """
     statement = statement.replace(" ", "")
     var = ''
     for i in statement:
@@ -135,6 +194,12 @@ def op_equals_var(statement):
 
 
 def new_uncommented_line(i, statements):
+    """
+    return next uncommented line
+    :param i: current token index
+    :param statements: input tokens set
+    :return: new index number in input tokens
+    """
     statement = statements[i]
     statement = statement.strip()
     if statement.startswith('#'):
@@ -148,6 +213,12 @@ def new_uncommented_line(i, statements):
 
 
 def check_op_equals(i, tokens):
+    """
+    condition to check op-equals and return new index number
+    :param i: current index in token
+    :param tokens: token input
+    :return: boolean for op-equal or not, and new index to start
+    """
     if tokens[i] in binary_operators:
         return i + 1 < len(tokens) and tokens[i + 1] == '=', 2
     elif tokens[i] in boolean_operators:
@@ -155,7 +226,15 @@ def check_op_equals(i, tokens):
     else:
         return False, 0
         # tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '='
+
+
 def next_varnum(index, tokens):
+    """
+    Checks whether next is number or variable and return if any
+    :param index: current index in token
+    :param tokens: token input
+    :return: boolean and variable/number
+    """
     if tokens[index].isdigit():
         val_str = ''
         while index < len(tokens) and tokens[index].isalnum():
@@ -178,6 +257,12 @@ def next_varnum(index, tokens):
 
 # Function that returns value of expression after evaluation.
 def bc_evaluator(tokens):
+    """
+    Evaluate the token and return the result of the expression according to the precedence and extension support.
+    It also takes care of comments. It takes variable value to 0.0 if not defined.
+    :param tokens: token input
+    :return: result of token expression
+    """
     # stack to store integer values.
     values = []
     is_prev_variable = False
@@ -248,12 +333,7 @@ def bc_evaluator(tokens):
             jump_ind = check_op_equals(i, tokens)[1]
             i += jump_ind
             is_prev_variable, is_prev_operator = False, True
-        # elif tokens[i] in (boolean_operators + binary_operators) and i + 1 < len(tokens) and tokens[i + 1] == '=':
-        #     # op-equals extension
-        #     ops.append(tokens[i])
-        #     i += 2
-        #     is_prev_variable, is_prev_operator = False, True
-        #     continue
+            continue
         elif tokens[i] in relational_operators or (i + 1 < len(tokens) and tokens[i:i + 2] in relational_operators):
             curr_ops = tokens[i]
             if i + 1 < len(tokens) and tokens[i:i + 2] in relational_operators:
@@ -386,6 +466,10 @@ def bc_evaluator(tokens):
 
 
 def bc_parser(input_expression):
+    """
+    parse the input expression and create tokens and send each one to evaluator for evaluation. Print output as per inputs
+    :param input_expression: input statements string
+    """
     statements = input_expression.split('\n')
     parse_error = 0
     dbz_error = 0
@@ -479,10 +563,14 @@ def bc_parser(input_expression):
 
 # main function - takes input from std in and pass it to bc parser
 def bc_calculator():
+    """
+    takes input from stdin and send it to bc parser for evaluation of input statements
+    """
     statements = sys.stdin.read()
     bc_parser(statements)
 
 
+# calls main executor function which takes input from stdin and start evaluation
 bc_calculator()
 
 # ip_ = """

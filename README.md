@@ -39,9 +39,10 @@
 I've implemented 4 extensions. 
 Each extension is described as below:
 ### Op-equals:
-- Op-equals extension helps us to evaluate the expressions containing  +=, -=, *=, /=, %= and ^= operators. In the bc_parser, each line is checked whether it contains the above mentioned operators. if yes, it is directed to operator parser function to strip the whitespaces and validate the string contains alphanumeric characters. It returns the processed string and passed into bc_calculator function as an input argument
-- The next step is identifying the operator in the string and performing the operation accordingly and storing the updated variable name and its value in VARIABLES dictionary which created at the beginning. All operators are stored in stacks and validated using BODMAS rules. Error handling is done for this case when invalid operators such as '++' or '--' are present. it catches in excpetion it can be used only on variables.
-- Test cases for this extension: 
+- Op-equals extension helps us to evaluate the expressions containing  `+=, -=, *=, /=, %=, ^=, &&=, !!=` operators. 
+- The format for Op-equals is `VAR OP= ARG` means the `op` is applied on `VAR` with argument `ARG`. Usually, all binary operators can be used in Op-equals. 
+- Technically, `x op= y` is equal to `x = x op y`.
+- Refer below example for better understanding and context.
 1. x=1<br>
 x+=10<br>
 print x<br>
@@ -80,10 +81,14 @@ print b<br>
 
 
 ### Boolean Operators:
-- Binary operations extension evaluates the input statements which contain mathematical expressions having ['&', '|', '!'] this operators. in each input line, the operators are recognized and stored in operators stacks, the line passed into bc_parser and then the variables are recognized and the experssion is evaluated using apply_operation(a,b,op) function which return the value.
-- In the bc_evaluator() function, the input is validated by checking whether the constant is present in variables dict and then access its value and perform the operation and then update the variable value in the dictionary. Error handling is done for this extension by catching error when input line contains '&&&' or '|||' in the expression since its valid only for binary and logic operations. For an expression to be evaluated, variable values stored in stacks are popped out and even the operator and then those are passed into apply_operation() function. 
-- In this way, the extension works and no errors have been found since every possibility is tried and the errors are caught and displayed when given invalid inputs
+- Binary operations extension evaluates the input statements which contain mathematical expressions having `&& (and), || (or), ! (negation)` operators. `&` and `|` are binary operator while `!` is unary operator. 
+- The output for any boolean expression would `1` means true or `0` means false. Generally, each non-zero number is treated as `true`. 
+- `& (and), | (or)` : supports Op-equals operation too as these are binary operator and updates LHS variable too. 
+- The return type for this boolean operator extension would be int, not float as it represent output as binary i.e. true/false. 
+- These operators have lower precedence than arithmetic and relational expressions. 
+- `|| and &&` are left associative, while `!` is non-associative.
 - Test cases for this extension:
+
 1. x=5<br>
 y=0<br>
 print x&&y, x||y, !x<br>
@@ -96,8 +101,12 @@ print x&y, x&&&y, x|||y<br>
 -> 1 1 1 0
 
 ### Comments:
-- Comments extension helps us to identify whether the input given is markdown or not. Using is_commented(statement) function, it returns whether it starts with '/*' or # and it passed to new_commented_line(i, statements) function where it returns the current index of input statements. 
-- Till the line contains "*/" the i index increments making the parser to ignore the lines whatever given in between /* and /*. In this way the extension works and ignores the commented input lines. The comment is recognized even with '#' symbol. One or more symbols can be considered as the comment and the commands won't execute post the symbol. In this way, this extension works
+- Comments are used to improve more readability of written code. The parser just ignores the commented part of the input. 
+- Comments extension helps us to identify whether the input given is markdown or not.  
+- Comments can be done in 2 ways:
+  1. Multi-line comments: it starts with `/*` till `*/`. It can start anywhere and end anywhere. All the token content in b/w these are simply ignored as its commented. 
+  2. Single-line comments: it starts with `#`. It just comments the current one line only. 
+- As per specs, we don't have support for nested comments. Comment can appear anywhere inbetween input token. 
 - Test cases for this extension:
 1. a=20<br>
 /*<br>
@@ -122,9 +131,9 @@ print x<br>
 
 
 ### Relational Operations:
-- Relational operations extension evaluates the input statements which contain ['==', '<=', '>=', '!=', '<', '>'] this operators. Every operation returns the boolean value and is checked between two variables. The input line is checked whether it contains any of the above operators using the is_relational_cond() condition which is used in the bc_parser() function. Then, it is checked whether it contains any variables which are not defined. 
-- It is then passed into relational_cond_var() function to collect variable and the value present in the relation. After processing the input and then getting the variable and the value from the function, these two are passed into bc_evaluator function and it is evaluated inside the function. 
-- Error handling is done for this Extension catching Zero division error and Parsing error. In this way this extension is implemented. 
+- Relational operations extension evaluates the input statements which contain `'==', '<=', '>=', '!=', '<', '>'` operators.  
+- It represents true as `1` and false as `0`. Means the output 1 means the relation holds true for the input.
+- Relational operators should be left associative and lower precedence than arithmteic operators.
 - Test cases for this extension:
 1. x=10<br>
 y=4<br>
